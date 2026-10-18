@@ -40,6 +40,10 @@ export default function PrivPage() {
 
   const handleOfferClick = (offer: (typeof offers)[number]) => {
     setSelectedOffer(offer)
+    setPaymentMethod(null)
+  }
+
+  const openPayment = () => {
     // A página /priv usa sempre PIX direto, sem formulário de e-mail.
     setPaymentMethod("sigilo")
   }
@@ -110,6 +114,55 @@ export default function PrivPage() {
           <p className="mt-8 text-2xl font-black text-[#f0008c]">Priv</p>
         </div>
       </section>
+
+      {selectedOffer && paymentMethod === null && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-[#07142f]/60 px-4 py-6 backdrop-blur-sm"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="offer-preview-title"
+          onClick={closeCheckout}
+        >
+          <div
+            className="relative w-full max-w-[430px] overflow-hidden rounded-[26px] bg-white text-[#07142f] shadow-2xl"
+            onClick={(event) => event.stopPropagation()}
+          >
+            <button
+              type="button"
+              onClick={closeCheckout}
+              aria-label="Fechar detalhes do pacote"
+              className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-xl leading-none text-white transition hover:bg-black/75"
+            >
+              <span aria-hidden="true">×</span>
+            </button>
+            <img
+              src={selectedOffer.image}
+              alt={`Imagem ampliada do ${selectedOffer.title}`}
+              className="h-64 w-full object-cover sm:h-72"
+            />
+            <div className="space-y-4 p-5 text-left sm:p-6">
+              <div>
+                <p className="mb-1 text-xs font-bold uppercase tracking-[0.16em] text-[#f0008c]">{selectedOffer.accent}</p>
+                <h2 id="offer-preview-title" className="text-2xl font-black">{selectedOffer.title}</h2>
+                <p className="mt-2 text-sm leading-relaxed text-[#536078]">{selectedOffer.description}.</p>
+              </div>
+              <div className="flex items-end justify-between border-t border-[#e8ebf2] pt-4">
+                <div>
+                  {selectedOffer.oldPrice && <p className="text-sm text-[#536078] line-through">{selectedOffer.oldPrice}</p>}
+                  <p className="text-2xl font-black text-[#f0008c]">{selectedOffer.price}</p>
+                </div>
+                <button
+                  type="button"
+                  onClick={openPayment}
+                  className="rounded-xl bg-[#f0008c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]"
+                >
+                  Quero este pacote
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {selectedOffer && paymentMethod === "sigilo" && (
         <CheckoutModal
