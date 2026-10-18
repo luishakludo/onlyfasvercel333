@@ -16,6 +16,7 @@ const offers = [
     price: "R$ 27,99",
     oldPrice: "R$ 127,99",
     accent: "VIP",
+    image: "/images/vip-album.png",
   },
   {
     title: "Álbum exclusivo",
