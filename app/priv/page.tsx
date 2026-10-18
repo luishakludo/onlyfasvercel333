@@ -49,17 +49,17 @@ export default function PrivPage() {
   return (
     <main className="min-h-screen bg-[#f3f6fc] px-4 py-7 text-[#07142f]">
       <section className="mx-auto w-full max-w-[720px] overflow-hidden rounded-[28px] bg-white shadow-sm">
-        <div className="relative h-[150px] overflow-hidden bg-[#d8dce4]">
+        <div className="relative z-10 h-[150px] overflow-visible bg-[#d8dce4]">
           <img src={coverImage} alt="Capa do perfil" className="block h-full w-full object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10" />
           <img
             src={profileImage}
             alt="Foto do perfil"
-            className="absolute bottom-[-34px] left-1/2 h-[104px] w-[104px] -translate-x-1/2 rounded-full border-[7px] border-white object-cover"
+            className="absolute bottom-[-34px] left-1/2 z-20 h-[104px] w-[104px] -translate-x-1/2 rounded-full border-[7px] border-white object-cover shadow-sm"
           />
         </div>
 
-        <div className="px-5 pb-7 pt-11 text-center font-sans sm:px-10">
+        <div className="relative z-0 px-5 pb-7 pt-11 text-center font-sans sm:px-10">
           <h1 className="mx-auto max-w-[620px] text-[21px] font-semibold leading-[1.3] tracking-[-0.02em] sm:text-[25px]">
             ⚡ PROMOÇÃO RELÂMPAGO, VÁLIDO ATÉ AS 23:00H 🔥 ⏰ ⌛ — VAGAS LIMITADAS PARA OS 100 PRIMEIROS 💎
           </h1>
