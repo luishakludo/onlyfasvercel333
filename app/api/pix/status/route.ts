@@ -22,6 +22,7 @@ export async function GET(req: NextRequest) {
 
     let status = "pendente"
     let paidAt: string | null = null
+    let paymentGateway: string | null = null
 
     // 1) Supabase (não bloqueia caso esteja indisponível)
     try {
@@ -34,9 +35,9 @@ export async function GET(req: NextRequest) {
       const { data } = await query.maybeSingle()
       status = data?.status ?? "pendente"
       paidAt = data?.paid_at ?? null
-      const gateway = data?.gateway
+      paymentGateway = data?.gateway ?? null
 
-      if (status !== "pago" && transactionId && gateway === "sigilo") {
+      if (status !== "pago" && transactionId && paymentGateway === "sigilo") {
         const publicKey = (process.env.SIGILO_PUBLIC_KEY || "").trim()
         const secretKey = (process.env.SIGILO_SECRET_KEY || "").trim()
         if (publicKey && secretKey) {
@@ -61,7 +62,7 @@ export async function GET(req: NextRequest) {
     }
 
     // 2) Fallback: consulta a AtenasPay diretamente (GET) quando ainda não está pago.
-    if (status !== "pago" && transactionId) {
+    if (status !== "pago" && transactionId && paymentGateway !== "sigilo") {
       try {
         const res = await fetch(`${ATENASPAY_BASE_URL}/api/pix/${transactionId}`, {
           method: "GET",
