@@ -80,7 +80,7 @@ export function CheckoutModal({
   checkoutConfig?: CheckoutConfig
   colors: CheckoutColors
   // Força uma gateway específica (ex.: /nescau sempre na AtenasPay = "nexuspag").
-  forceGateway?: "nexuspag" | "hyzepay"
+  forceGateway?: "nexuspag" | "hyzepay" | "sigilo"
   startWithCallUpsell?: boolean
   onClose: () => void
 }) {

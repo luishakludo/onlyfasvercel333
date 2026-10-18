@@ -3,12 +3,13 @@ import { type NextRequest, NextResponse } from "next/server"
 import { getServerSupabase } from "@/lib/supabase/server"
 
 type BumpInput = { title: string; price: number }
-type GatewayType = "hyzepay" | "nexuspag"
+type GatewayType = "hyzepay" | "nexuspag" | "sigilo"
 
 // Chave AtenasPay no hardcode (usada por todas as modelos por padrão).
 // A API da AtenasPay segue o mesmo formato da NexusPag (header x-api-key).
 const ATENASPAY_API_KEY = "atenaspay_live_e51723ce4d671220f44bbbb86ed5b5f2915499a03667a55a146240e72e04b5fa"
 const ATENASPAY_BASE_URL = "https://atenaspay.com.br"
+const SIGILO_BASE_URL = "https://app.sigilopay.com.br/api/v1/gateway"
 
 export async function POST(req: NextRequest) {
   try {
@@ -29,16 +30,10 @@ export async function POST(req: NextRequest) {
     const modelId: string | null = body.modelId || null
     // Permite forçar a gateway pela página (ex.: /nescau sempre na AtenasPay).
     const forceGateway: GatewayType | null =
-      body.forceGateway === "nexuspag" || body.forceGateway === "hyzepay" ? body.forceGateway : null
+      body.forceGateway === "nexuspag" || body.forceGateway === "hyzepay" || body.forceGateway === "sigilo" ? body.forceGateway : null
     const planName: string | null = body.planName || null
     const modelName: string | null = typeof body.modelName === "string" ? body.modelName.trim() : null
     // Dados padrão para a cobrança direta: o cliente não precisa preencher formulário.
-    const customer = {
-      name: "Cliente PIX",
-      email,
-      document: "12345678909",
-      phone: "11999999999",
-    }
     const requestedDescription: string | null =
       typeof body.description === "string" ? body.description.trim() : null
     const bumps: BumpInput[] = Array.isArray(body.bumps) ? body.bumps : []
@@ -57,6 +52,13 @@ export async function POST(req: NextRequest) {
       email = `pix-${nanoid(10)}@pix-direto.local`
     } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
       return NextResponse.json({ error: "E-mail inválido." }, { status: 400 })
+    }
+
+    const customer = {
+      name: "Cliente PIX",
+      email,
+      document: "12345678909",
+      phone: "11999999999",
     }
 
     let supabase: ReturnType<typeof getServerSupabase> | null = null
@@ -93,7 +95,43 @@ export async function POST(req: NextRequest) {
     let qrCode: string | undefined
     let pixCopiaECola: string | undefined
 
-    if (activeGateway === "nexuspag") {
+    if (activeGateway === "sigilo") {
+      const publicKey = (process.env.SIGILO_PUBLIC_KEY || "").trim()
+      const secretKey = (process.env.SIGILO_SECRET_KEY || "").trim()
+      if (!publicKey || !secretKey) {
+        return NextResponse.json({ error: "Credenciais da Sigilo Pay não configuradas." }, { status: 500 })
+      }
+
+      const forwardedProto = req.headers.get("x-forwarded-proto") || "https"
+      const forwardedHost = req.headers.get("x-forwarded-host") || req.headers.get("host")
+      const callbackUrl = forwardedHost ? `${forwardedProto}://${forwardedHost}/api/pix/webhook` : undefined
+      const response = await fetch(`${SIGILO_BASE_URL}/pix/receive`, {
+        method: "POST",
+        headers: {
+          "x-public-key": publicKey,
+          "x-secret-key": secretKey,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          identifier: externalId,
+          amount,
+          client: customer,
+          products: [{ id: planName || externalId, name: description, quantity: 1, price: amount }],
+          callbackUrl,
+          metadata: { provider: "BarraPrive", orderId: externalId },
+        }),
+      })
+      const apiResponse = await response.json().catch(() => ({}))
+      if (!response.ok) {
+        return NextResponse.json({ error: apiResponse.message || "Erro ao criar cobrança PIX na Sigilo Pay." }, { status: response.status })
+      }
+      if (!apiResponse.transactionId || !apiResponse.pix?.code) {
+        return NextResponse.json({ error: "Resposta incompleta da API Sigilo Pay." }, { status: 502 })
+      }
+      transactionId = apiResponse.transactionId
+      pixCopiaECola = apiResponse.pix.code
+      qrCode = apiResponse.pix.image
+    } else if (activeGateway === "nexuspag") {
       // ============ ATENASPAY ============
       // Usa a chave configurada no painel; se não houver, cai na key do hardcode.
       const nexusSecretKey = (map.nexuspag_secret_key || "").trim() || ATENASPAY_API_KEY

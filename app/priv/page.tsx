@@ -3,7 +3,6 @@
 import { useState } from "react"
 import Link from "next/link"
 import { CheckoutModal } from "@/components/landing/checkout-modal"
-import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
 
 const coverImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4936166533197663844-cJ8nMNrFT1biLSzOvJThzRP8AcCt0v.jpg"
@@ -34,12 +33,12 @@ const offers = [
 
 export default function PrivPage() {
   const [selectedOffer, setSelectedOffer] = useState<(typeof offers)[number] | null>(null)
-  const [paymentMethod, setPaymentMethod] = useState<"stripe" | "atenas" | null>(null)
+  const [paymentMethod, setPaymentMethod] = useState<"sigilo" | null>(null)
 
   const handleOfferClick = (offer: (typeof offers)[number]) => {
     setSelectedOffer(offer)
     // A página /priv usa sempre PIX direto, sem formulário de e-mail.
-    setPaymentMethod("atenas")
+    setPaymentMethod("sigilo")
   }
 
   const closeCheckout = () => {
@@ -101,25 +100,16 @@ export default function PrivPage() {
         </div>
       </section>
 
-      {selectedOffer && paymentMethod === "stripe" && (
-        <StripeCheckoutModal
-          plan={{ id: "1m", name: selectedOffer.title, price: selectedOffer.price, period: "por mês" }}
-          modelName="Conteúdo exclusivo"
-          colors={{ background: "#f3f6fc", text: "#07142f", subtext: "#536078", accent: "#f0008c", cardBg: "#ffffff" }}
-          onClose={closeCheckout}
-        />
-      )}
-
-      {selectedOffer && paymentMethod === "atenas" && (
+      {selectedOffer && paymentMethod === "sigilo" && (
         <CheckoutModal
           plan={{ id: selectedOffer.title, name: selectedOffer.title, price: selectedOffer.price }}
           modelName="Conteúdo exclusivo"
           orderBumps={[]}
           title="Pagamento seguro"
-          subtitle="Gere seu PIX pela AtenasPay."
+          subtitle="Gere seu PIX pela Sigilo Pay."
           checkoutConfig={{
             title: "Pagamento seguro",
-            subtitle: "Gere seu PIX pela AtenasPay.",
+            subtitle: "Gere seu PIX pela Sigilo Pay.",
             mode: "direto",
             queueEnabled: false,
             queueHours: 0,
@@ -128,7 +118,7 @@ export default function PrivPage() {
             priorityText: "",
           }}
           colors={{ background: "#f3f6fc", text: "#07142f", subtext: "#536078", accent: "#f0008c", cardBg: "#ffffff" }}
-          forceGateway="nexuspag"
+          forceGateway="sigilo"
           onClose={closeCheckout}
         />
       )}
