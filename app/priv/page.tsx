@@ -22,6 +22,7 @@ const offers = [
     description: "Conteúdo selecionado para você",
     price: "R$ 16,99",
     accent: "EXCLUSIVO",
+    image: "/images/exclusive-album.png",
   },
   {
     title: "Pacote básico",
