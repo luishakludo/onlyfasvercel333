@@ -28,6 +28,7 @@ const offers = [
     description: "Com poucas fotos",
     price: "R$ 7,99",
     accent: "BÁSICO",
+    image: "/images/basic-package.png",
   },
 ]
 
@@ -76,9 +77,17 @@ export default function PrivPage() {
                 onClick={() => handleOfferClick(offer)}
                 className="group flex min-h-[76px] w-full items-center gap-3 rounded-2xl border border-black/[0.04] bg-white px-3.5 py-2.5 text-left shadow-[0_5px_18px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(0,0,0,0.14)]"
               >
-                <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#b29acb] to-[#ecd9ee] text-center text-[10px] font-black uppercase text-white">
-                  {offer.accent}
-                </div>
+                {offer.image ? (
+                  <img
+                    src={offer.image}
+                    alt={`Imagem do ${offer.title}`}
+                    className="h-14 w-14 shrink-0 rounded-lg object-cover"
+                  />
+                ) : (
+                  <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-lg bg-gradient-to-br from-[#b29acb] to-[#ecd9ee] text-center text-[10px] font-black uppercase text-white">
+                    {offer.accent}
+                  </div>
+                )}
                 <div className="min-w-0 flex-1">
                   <p className="text-[15px] font-bold leading-snug sm:text-base">{offer.title} <span className="font-semibold">{offer.description}</span></p>
                   {offer.oldPrice && <p className="mt-0.5 text-[13px] font-semibold leading-snug">De {offer.oldPrice} por uma oferta especial</p>}
