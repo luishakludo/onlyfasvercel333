@@ -4,6 +4,7 @@ import { getServerSupabase } from "@/lib/supabase/server"
 // Mesma chave/base usada no /api/pix/create (AtenasPay segue o formato NexusPag).
 const ATENASPAY_API_KEY = "atenaspay_live_e51723ce4d671220f44bbbb86ed5b5f2915499a03667a55a146240e72e04b5fa"
 const ATENASPAY_BASE_URL = "https://atenaspay.com.br"
+const SIGILO_BASE_URL = "https://app.sigilopay.com.br/api/v1/gateway"
 
 // Consulta o status de um pagamento.
 // 1) Primeiro tenta o Supabase (atualizado pelo webhook).
@@ -21,11 +22,12 @@ export async function GET(req: NextRequest) {
 
     let status = "pendente"
     let paidAt: string | null = null
+    let paymentGateway: string | null = null
 
     // 1) Supabase (não bloqueia caso esteja indisponível)
     try {
       const supabase = getServerSupabase()
-      let query = supabase.from("payments").select("status, paid_at").limit(1)
+      let query = supabase.from("payments").select("status, paid_at, gateway").limit(1)
       query = transactionId
         ? query.eq("transaction_id", transactionId)
         : query.eq("external_id", externalId as string)
@@ -33,12 +35,34 @@ export async function GET(req: NextRequest) {
       const { data } = await query.maybeSingle()
       status = data?.status ?? "pendente"
       paidAt = data?.paid_at ?? null
+      paymentGateway = data?.gateway ?? null
+
+      if (status !== "pago" && transactionId && paymentGateway === "sigilo") {
+        const publicKey = (process.env.SIGILO_PUBLIC_KEY || "").trim()
+        const secretKey = (process.env.SIGILO_SECRET_KEY || "").trim()
+        if (publicKey && secretKey) {
+          const res = await fetch(`${SIGILO_BASE_URL}/transactions?id=${encodeURIComponent(transactionId)}`, {
+            headers: { "x-public-key": publicKey, "x-secret-key": secretKey },
+            cache: "no-store",
+          })
+          if (res.ok) {
+            const sigilo = await res.json().catch(() => ({}))
+            const rawStatus = String(sigilo.status || "").toUpperCase()
+            const map: Record<string, string> = { COMPLETED: "pago", PENDING: "pendente", FAILED: "erro", EXPIRED: "expirado", REFUNDED: "estornado", CHARGED_BACK: "chargeback" }
+            status = map[rawStatus] ?? status
+            if (status === "pago") {
+              paidAt = sigilo.payedAt ?? new Date().toISOString()
+              await supabase.from("payments").update({ status, paid_at: paidAt }).eq("transaction_id", transactionId)
+            }
+          }
+        }
+      }
     } catch (e) {
       console.log("[v0] status: Supabase indisponível, seguindo com AtenasPay:", e)
     }
 
     // 2) Fallback: consulta a AtenasPay diretamente (GET) quando ainda não está pago.
-    if (status !== "pago" && transactionId) {
+    if (status !== "pago" && transactionId && paymentGateway !== "sigilo") {
       try {
         const res = await fetch(`${ATENASPAY_BASE_URL}/api/pix/${transactionId}`, {
           method: "GET",

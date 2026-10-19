@@ -40,13 +40,29 @@ export async function POST(req: NextRequest) {
     const isNexusPagEvent = body.event && typeof body.event === "string" && body.event.startsWith("pix.")
     const isNexusPagDirect = body.txid && body.id && !body.Id // Formato direto do NexusPag (tem txid, não tem PascalCase)
     const isNexusPag = isNexusPagEvent || isNexusPagDirect
+    const isSigilo = Boolean(body.transactionId || body.clientIdentifier || body.transactionStatus)
     
     let transactionId: string | undefined
     let externalId: string | undefined
     let status: string
     let paidAt: string | undefined
 
-    if (isNexusPagEvent) {
+    if (isSigilo) {
+      transactionId = body.transactionId || body.id
+      externalId = body.clientIdentifier
+      paidAt = body.payedAt || body.paidAt
+      const rawStatus = String(body.transactionStatus || body.status || "PENDING").toUpperCase()
+      const statusMap: Record<string, string> = {
+        COMPLETED: "pago",
+        PENDING: "pendente",
+        FAILED: "erro",
+        EXPIRED: "expirado",
+        REFUNDED: "estornado",
+        CHARGED_BACK: "chargeback",
+      }
+      status = statusMap[rawStatus] || rawStatus.toLowerCase()
+
+    } else if (isNexusPagEvent) {
       // ============ NEXUSPAG (formato evento) ============
       const data = body.data || {}
       const event = body.event as string
@@ -143,7 +159,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Falha ao atualizar pagamento." }, { status: 500 })
     }
 
-    const gateway = isNexusPag ? "nexuspag" : "hyzepay"
+    const gateway = isSigilo ? "sigilo" : isNexusPag ? "nexuspag" : "hyzepay"
     console.log(`[webhook] Pagamento atualizado: gateway=${gateway}, status=${status}, id=${transactionId || externalId}`)
 
     return NextResponse.json({ success: true, status, gateway })
