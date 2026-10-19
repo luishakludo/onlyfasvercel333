@@ -154,7 +154,7 @@ export default function PrivPage() {
 
           </div>
 
-          <p className="mt-8 text-2xl font-black text-[#f0008c]">Priv</p>
+          <p className="mt-8 text-2xl font-black text-[#f0008c]">Link Priv</p>
         </div>
       </section>
 
