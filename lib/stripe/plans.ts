@@ -35,6 +35,28 @@ export const STRIPE_PLANS: Record<string, StripePlan> = {
   },
 }
 
+STRIPE_PLANS["priv-basic"] = {
+  id: "priv-basic",
+  name: "Basic package",
+  productName: "Priv — Basic package",
+  amountCents: 360,
+  intervalCount: 1,
+}
+STRIPE_PLANS["priv-exclusive"] = {
+  id: "priv-exclusive",
+  name: "Exclusive album",
+  productName: "Priv — Exclusive album",
+  amountCents: 900,
+  intervalCount: 1,
+}
+STRIPE_PLANS["priv-vip"] = {
+  id: "priv-vip",
+  name: "Total VIP album",
+  productName: "Priv — Total VIP album",
+  amountCents: 1000,
+  intervalCount: 1,
+}
+
 export function getStripePlan(id: string): StripePlan | undefined {
   return STRIPE_PLANS[id]
 }
