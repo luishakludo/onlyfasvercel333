@@ -244,31 +244,24 @@ export default function PrivPage() {
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-[#07142f]/70 px-4 py-6 backdrop-blur-sm" role="dialog" aria-modal="true" aria-labelledby="downsell-title">
           <div className="relative w-full max-w-[430px] overflow-hidden rounded-[28px] bg-white text-[#07142f] shadow-2xl">
             <button type="button" onClick={() => setShowDownsell(false)} aria-label="Close special offer" className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-xl text-white">×</button>
-            <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-[#170b25] via-[#4b123d] to-[#f0008c] px-8 text-center text-white">
+            <div className="relative flex h-64 items-end justify-center overflow-hidden bg-[#170b25] text-center text-white sm:h-72">
               <img
                 src={showDownsell === "basic" ? "/images/basic-package.png" : vipDownsellImage}
                 alt={showDownsell === "basic" ? "Exclusive content preview" : "VIP private offer preview"}
-                className="absolute inset-0 h-full w-full object-cover opacity-50"
+                className="absolute inset-0 h-full w-full object-cover object-center"
               />
-              <div className="absolute inset-0 bg-black/25" />
-              <div className="relative">
-                <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/75">{showDownsell === "basic" ? "Exclusive bonus" : "VIP private offer"}</p>
-                <p className="mt-2 text-3xl font-black">{showDownsell === "basic" ? "You unlocked more" : "One last chance"}</p>
-                <p className="mt-1 text-sm text-white/80">{showDownsell === "basic" ? "Preview the exclusive media included" : "Reserved space for your downsell media"}</p>
-              </div>
+              <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent" />
             </div>
-            <div className="space-y-4 p-6">
+            <div className="space-y-3 p-5 sm:p-6">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f0008c]">{showDownsell === "basic" ? "Exclusive upgrade" : "Special access"}</p>
-                <h2 id="downsell-title" className="mt-1 text-2xl font-black">{showDownsell === "basic" ? "You also won exclusive videos" : "Are you sure you want to miss the VIP album?"}</h2>
-                <p className="mt-2 text-sm leading-relaxed text-[#536078]">{showDownsell === "basic" ? "Subscribe now and unlock your exclusive media preview for a special price before this offer disappears." : "Keep your chance to access the complete VIP collection with an exclusive discount available right now."}</p>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f0008c]">{showDownsell === "basic" ? "Exclusive upgrade" : "VIP private offer"}</p>
+                <h2 id="downsell-title" className="mt-1 text-xl font-black sm:text-2xl">{showDownsell === "basic" ? "Unlock exclusive videos" : "Unlock the VIP album"}</h2>
               </div>
-              <div className="flex items-end justify-between rounded-2xl bg-[#fff1f9] p-4">
+              <div className="flex items-end justify-between rounded-2xl bg-[#fff1f9] p-3.5">
                 <div><p className="text-sm text-[#536078] line-through">{showDownsell === "basic" ? "$3.60" : "$10.00"}</p><p className="text-3xl font-black text-[#f0008c]">{showDownsell === "basic" ? "$2.99" : "$7.00"}</p></div>
                 <span className="rounded-full bg-[#f0008c] px-3 py-1 text-xs font-black text-white">{showDownsell === "basic" ? "SAVE $0.61" : "SAVE $3"}</span>
               </div>
-              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#f0008c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]">{showDownsell === "basic" ? "Yes, unlock exclusive access for $2.99" : "Yes, unlock VIP for $7"}</button>
-              <button type="button" onClick={() => setShowDownsell(false)} className="w-full rounded-xl border border-[#e8ebf2] px-5 py-3 text-sm font-semibold text-[#536078]">No, I’ll pass</button>
+              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#f0008c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]">{showDownsell === "basic" ? "Yes, unlock for $2.99" : "Yes, unlock VIP for $7"}</button>
             </div>
           </div>
         </div>
