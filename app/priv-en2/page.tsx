@@ -1,7 +1,6 @@
 "use client"
 
-import { useEffect, useState } from "react"
-import Link from "next/link"
+import { useEffect, useMemo, useState } from "react"
 import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
 
 const coverImage =
@@ -78,19 +77,16 @@ export default function PrivPage() {
     setLocale(language.startsWith("pt") ? "pt" : language.startsWith("es") ? "es" : "en")
   }, [])
 
-  const localizedOffers = offers.map((offer) => ({
+  const localizedOffers = useMemo(() => offers.map((offer) => ({
     ...offer,
     title: offer.id === "priv-vip" ? t.vip : offer.id === "priv-basic" ? t.basic : t.exclusive,
     description: offer.id === "priv-vip" ? t.vipDescription : offer.id === "priv-basic" ? t.basicDescription : t.exclusiveDescription,
-  }))
+  })), [t])
 
   const handleOfferClick = (offer: (typeof offers)[number]) => {
     setSelectedOffer(offer)
     setPaymentMethod(null)
-    setGiftData(null)
   }
-
-
 
   const openPayment = () => {
     // A página /priv usa sempre PIX direto, sem formulário de e-mail.
@@ -106,11 +102,13 @@ export default function PrivPage() {
     <main className="min-h-screen bg-[#f3f6fc] px-4 py-7 text-[#07142f]">
       <section className="mx-auto w-full max-w-[720px] overflow-hidden rounded-[28px] bg-white shadow-sm">
         <div className="relative z-10 h-[150px] overflow-visible bg-[#d8dce4]">
-          <img src={coverImage} alt="Capa do perfil" className="block h-full w-full object-cover object-center" />
+          <img src={coverImage} alt="Capa do perfil" width={720} height={150} fetchPriority="high" className="block h-full w-full object-cover object-center" />
           <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/10" />
           <img
             src={profileImage}
             alt="Foto do perfil"
+            width={104}
+            height={104}
             className="absolute bottom-[-34px] left-1/2 z-20 h-[104px] w-[104px] -translate-x-1/2 rounded-full border-[7px] border-white object-cover shadow-sm"
           />
         </div>
@@ -127,7 +125,7 @@ export default function PrivPage() {
           <div className="mt-7 space-y-5 text-left">
             {localizedOffers.map((offer) => (
               <button
-                key={offer.title}
+                key={offer.id}
                 type="button"
                 onClick={() => handleOfferClick(offer)}
                 className="group flex min-h-[76px] w-full items-center gap-3 rounded-2xl border border-black/[0.04] bg-white px-3.5 py-2.5 text-left shadow-[0_5px_18px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(0,0,0,0.14)]"
@@ -135,7 +133,10 @@ export default function PrivPage() {
                 {offer.image ? (
                   <img
                     src={offer.image}
-                    alt={`Imagem do ${offer.title}`}
+                    alt={offer.title}
+                    width={56}
+                    height={56}
+                    loading="lazy"
                     className="h-14 w-14 shrink-0 rounded-lg object-cover"
                   />
                 ) : (
@@ -180,7 +181,9 @@ export default function PrivPage() {
             </button>
             <img
               src={selectedOffer.image}
-              alt={`Imagem ampliada do ${selectedOffer.title}`}
+              alt={selectedOffer.title}
+              width={720}
+              height={288}
               className="h-64 w-full object-cover sm:h-72"
             />
             <div className="space-y-4 p-5 text-left sm:p-6">
