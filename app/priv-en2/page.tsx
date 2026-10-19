@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
+import { GiftModal } from "@/components/landing/gift-modal"
 
 const coverImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4936166533197663844-cJ8nMNrFT1biLSzOvJThzRP8AcCt0v.jpg"
@@ -70,6 +71,8 @@ export default function PrivPage() {
   const [locale, setLocale] = useState<Locale>("en")
   const [selectedOffer, setSelectedOffer] = useState<(typeof offers)[number] | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | null>(null)
+  const [isGiftModalOpen, setIsGiftModalOpen] = useState(false)
+  const [giftData, setGiftData] = useState<{ senderName: string; message: string } | null>(null)
   const t = translations[locale]
 
   useEffect(() => {
@@ -86,6 +89,18 @@ export default function PrivPage() {
   const handleOfferClick = (offer: (typeof offers)[number]) => {
     setSelectedOffer(offer)
     setPaymentMethod(null)
+    setGiftData(null)
+  }
+
+  const handleGiftClick = () => {
+    setIsGiftModalOpen(true)
+  }
+
+  const handleGiftSubmit = (data: { senderName: string; message: string }) => {
+    setGiftData(data)
+    setIsGiftModalOpen(false)
+    // Após preencher o presente, abre o modal de pagamento
+    setPaymentMethod("stripe")
   }
 
   const openPayment = () => {
@@ -96,6 +111,8 @@ export default function PrivPage() {
   const closeCheckout = () => {
     setSelectedOffer(null)
     setPaymentMethod(null)
+    setGiftData(null)
+    setIsGiftModalOpen(false)
   }
 
   return (
@@ -147,13 +164,14 @@ export default function PrivPage() {
               </button>
             ))}
 
-            <Link
-              href="/priv"
-              className="flex min-h-[76px] items-center justify-between rounded-2xl border-2 border-[#f0008c] px-4 text-[#e50086] shadow-[0_3px_12px_rgba(240,0,140,0.15)] transition hover:bg-[#fff4fb]"
+            <button
+              type="button"
+              onClick={handleGiftClick}
+              className="flex w-full min-h-[76px] items-center justify-between rounded-2xl border-2 border-[#f0008c] px-4 text-[#e50086] shadow-[0_3px_12px_rgba(240,0,140,0.15)] transition hover:bg-[#fff4fb]"
             >
               <span className="text-lg font-extrabold">{t.gift}</span>
               <span aria-hidden="true" className="text-3xl">+</span>
-            </Link>
+            </button>
           </div>
 
           <p className="mt-8 text-2xl font-black text-[#f0008c]">Priv</p>
@@ -209,6 +227,13 @@ export default function PrivPage() {
         </div>
       )}
 
+      <GiftModal
+        isOpen={isGiftModalOpen}
+        onClose={() => setIsGiftModalOpen(false)}
+        onSubmit={handleGiftSubmit}
+        colors={{ background: "#f3f6fc", text: "#07142f", subtext: "#536078", accent: "#f0008c", cardBg: "#ffffff" }}
+      />
+
       {selectedOffer && paymentMethod === "stripe" && (
         <StripeCheckoutModal
           plan={{ id: selectedOffer.id, name: selectedOffer.title, price: selectedOffer.price }}
@@ -222,6 +247,7 @@ export default function PrivPage() {
             buttonText: "Access complete album",
             buttonUrl: "https://t.me/+r1wJP767rDA0Mjcx",
           }}
+          giftData={giftData}
           onClose={closeCheckout}
         />
       )}

@@ -58,6 +58,7 @@ type Props = {
   labels?: StripeLabels
   deliverable?: Deliverable
   downsell?: boolean
+  giftData?: { senderName: string; message: string } | null
   onClose: () => void
 }
 
@@ -206,7 +207,7 @@ function PaymentForm({
   )
 }
 
-export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsProp, deliverable, downsell = false, onClose }: Props) {
+export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsProp, deliverable, downsell = false, giftData, onClose }: Props) {
   const labels = labelsProp ?? DEFAULT_LABELS
   const showDeliverable = deliverable?.enabled ?? false
   const browserLanguage = typeof navigator !== "undefined" ? navigator.language.toLowerCase() : "en"
@@ -378,6 +379,24 @@ export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsPro
                   {deliverableDescription}
                 </p>
               )}
+
+              {giftData && (
+                <div
+                  className="mt-5 w-full rounded-xl border-2 p-4 text-left"
+                  style={{ borderColor: colors.accent, backgroundColor: `${colors.accent}08` }}
+                >
+                  <p className="text-[12px] font-bold uppercase" style={{ color: colors.accent }}>
+                    🎁 Seu presentinho
+                  </p>
+                  <p className="mt-2 text-[13px] font-semibold" style={{ color: colors.text }}>
+                    De: {giftData.senderName}
+                  </p>
+                  <p className="mt-1 text-[13px] italic leading-relaxed" style={{ color: colors.subtext }}>
+                    &quot;{giftData.message}&quot;
+                  </p>
+                </div>
+              )}
+
               {deliverableButtonUrl ? (
                 <a
                   href={deliverableButtonUrl}
