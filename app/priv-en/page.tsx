@@ -147,13 +147,7 @@ export default function PrivPage() {
               </button>
             ))}
 
-            <Link
-              href="/priv"
-              className="flex min-h-[76px] items-center justify-between rounded-2xl border-2 border-[#f0008c] px-4 text-[#e50086] shadow-[0_3px_12px_rgba(240,0,140,0.15)] transition hover:bg-[#fff4fb]"
-            >
-              <span className="text-lg font-extrabold">{t.gift}</span>
-              <span aria-hidden="true" className="text-3xl">+</span>
-            </Link>
+
           </div>
 
           <p className="mt-8 text-2xl font-black text-[#f0008c]">Priv</p>
