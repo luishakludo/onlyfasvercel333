@@ -7,6 +7,8 @@ const coverImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4936166533197663844-cJ8nMNrFT1biLSzOvJThzRP8AcCt0v.jpg"
 const profileImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/790059490_18083216771471493_7120741971286687762_n-SLGBqGlxNyssD7kbPz18TJjJrsny9c.jpg"
+const vipDownsellImage =
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image%20%285%29-eJzUdNRtv0CMdrYRNQac8wpA3DN9Fd.png"
 
 const translations = {
   en: {
@@ -243,7 +245,12 @@ export default function PrivPage() {
           <div className="relative w-full max-w-[430px] overflow-hidden rounded-[28px] bg-white text-[#07142f] shadow-2xl">
             <button type="button" onClick={() => setShowDownsell(false)} aria-label="Close special offer" className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-xl text-white">×</button>
             <div className="relative flex h-44 items-center justify-center overflow-hidden bg-gradient-to-br from-[#170b25] via-[#4b123d] to-[#f0008c] px-8 text-center text-white">
-              {showDownsell === "basic" ? <img src="/images/basic-package.png" alt="Exclusive content preview" className="absolute inset-0 h-full w-full object-cover opacity-45" /> : null}
+              <img
+                src={showDownsell === "basic" ? "/images/basic-package.png" : vipDownsellImage}
+                alt={showDownsell === "basic" ? "Exclusive content preview" : "VIP private offer preview"}
+                className="absolute inset-0 h-full w-full object-cover opacity-50"
+              />
+              <div className="absolute inset-0 bg-black/25" />
               <div className="relative">
                 <p className="text-xs font-bold uppercase tracking-[0.2em] text-white/75">{showDownsell === "basic" ? "Exclusive bonus" : "VIP private offer"}</p>
                 <p className="mt-2 text-3xl font-black">{showDownsell === "basic" ? "You unlocked more" : "One last chance"}</p>
