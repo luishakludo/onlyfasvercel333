@@ -5,7 +5,7 @@ export const dynamic = "force-dynamic"
 
 const BRAZIL_COUNTRY_CODE = "BR"
 const BRAZIL_TELEGRAM_URL = "https://t.me/beatrizalbinabot"
-const INTERNATIONAL_PAGE = "/gp-en2"
+const INTERNATIONAL_PAGE = "/priv-en2"
 
 function getCountry(requestHeaders: Headers) {
   // Use the country resolved by the edge/proxy, never the browser language.

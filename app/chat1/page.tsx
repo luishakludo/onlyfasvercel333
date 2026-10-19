@@ -21,5 +21,5 @@ export default async function Chat1RedirectPage() {
     redirect("https://t.me/geovannapierrebot")
   }
 
-  redirect("/gp-en")
+  redirect("/priv-en")
 }
