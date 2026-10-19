@@ -252,16 +252,20 @@ export default function PrivPage() {
               />
               <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent" />
             </div>
-            <div className="space-y-3 p-5 sm:p-6">
+            <div className="space-y-4 p-5 sm:p-6">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f0008c]">{showDownsell === "basic" ? "Exclusive upgrade" : "VIP private offer"}</p>
-                <h2 id="downsell-title" className="mt-1 text-xl font-black sm:text-2xl">{showDownsell === "basic" ? "Unlock exclusive videos" : "Unlock the VIP album"}</h2>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f0008c]">{showDownsell === "basic" ? "Your exclusive discount" : "Your exclusive discount"}</p>
+                <h2 id="downsell-title" className="mt-1 text-xl font-black sm:text-2xl">{showDownsell === "basic" ? "Unlock exclusive videos for less" : "Your VIP discount is ready"}</h2>
+                <p className="mt-1 text-sm font-medium text-[#536078]">This special price is only available right now.</p>
               </div>
-              <div className="flex items-end justify-between rounded-2xl bg-[#fff1f9] p-3.5">
-                <div><p className="text-sm text-[#536078] line-through">{showDownsell === "basic" ? "$3.60" : "$10.00"}</p><p className="text-3xl font-black text-[#f0008c]">{showDownsell === "basic" ? "$2.99" : "$7.00"}</p></div>
-                <span className="rounded-full bg-[#f0008c] px-3 py-1 text-xs font-black text-white">{showDownsell === "basic" ? "SAVE $0.61" : "SAVE $3"}</span>
+              <div className="rounded-2xl border-2 border-[#f0008c]/25 bg-[#fff1f9] p-4">
+                <div className="flex items-center justify-between gap-3">
+                  <div><p className="text-xs font-bold uppercase tracking-wider text-[#536078]">Regular price</p><p className="text-lg font-bold text-[#536078] line-through">{showDownsell === "basic" ? "$3.60" : "$10.00"}</p></div>
+                  <div className="text-right"><p className="text-xs font-bold uppercase tracking-wider text-[#f0008c]">Today only</p><p className="text-3xl font-black text-[#f0008c]">{showDownsell === "basic" ? "$2.99" : "$7.00"}</p></div>
+                </div>
+                <p className="mt-3 rounded-lg bg-[#f0008c] px-3 py-2 text-center text-sm font-black text-white">{showDownsell === "basic" ? "You save $0.61" : "You save $3.00 — 30% OFF"}</p>
               </div>
-              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#f0008c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]">{showDownsell === "basic" ? "Yes, unlock for $2.99" : "Yes, unlock VIP for $7"}</button>
+              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#f0008c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]">{showDownsell === "basic" ? "Yes, unlock for $2.99" : "Yes, unlock VIP for $7 — save $3"}</button>
             </div>
           </div>
         </div>
