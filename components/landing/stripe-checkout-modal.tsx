@@ -45,6 +45,7 @@ type Plan = {
 
 type Deliverable = {
   enabled?: boolean
+  tier?: "low" | "medium" | "high"
   title?: string
   description?: string
   buttonText?: string

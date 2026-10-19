@@ -220,10 +220,19 @@ export default function PrivPage() {
           labels={t.labels}
           deliverable={{
             enabled: true,
+            tier: selectedOffer.id === "priv-basic" ? "low" : selectedOffer.id === "priv-exclusive" ? "medium" : "high",
             title: "Payment approved!",
-            description: "Your complete album access has been unlocked.",
-            buttonText: "Access complete album",
-            buttonUrl: "https://t.me/+r1wJP767rDA0Mjcx",
+            description: selectedOffer.id === "priv-basic"
+              ? "Your basic access has been unlocked."
+              : selectedOffer.id === "priv-exclusive"
+                ? "Your medium access has been unlocked."
+                : "Your high access has been unlocked.",
+            buttonText: "Access your content",
+            buttonUrl: selectedOffer.id === "priv-basic"
+              ? "https://t.me/+7UKq9MZYma5iN2Ux"
+              : selectedOffer.id === "priv-exclusive"
+                ? "https://t.me/+2l9fejrVfcNmZDEx"
+                : "https://t.me/+r1wJP767rDA0Mjcx",
           }}
 
           onClose={closeCheckout}
