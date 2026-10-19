@@ -9,6 +9,8 @@ const profileImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/790059490_18083216771471493_7120741971286687762_n-SLGBqGlxNyssD7kbPz18TJjJrsny9c.jpg"
 const vipDownsellImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image%20%285%29-eJzUdNRtv0CMdrYRNQac8wpA3DN9Fd.png"
+const basicDownsellVideo =
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/document_5073386812244757007_blurred%20%281%29-eDw9XhALRlGLy3jiCCCHMEkoWzgsmu.mp4"
 
 const translations = {
   en: {
@@ -245,18 +247,31 @@ export default function PrivPage() {
           <div className="relative w-full max-w-[430px] overflow-hidden rounded-[28px] bg-white text-[#07142f] shadow-2xl">
             <button type="button" onClick={() => setShowDownsell(false)} aria-label="Close special offer" className="absolute right-3 top-3 z-10 flex h-9 w-9 items-center justify-center rounded-full bg-black/55 text-xl text-white">×</button>
             <div className="relative flex h-64 items-end justify-center overflow-hidden bg-[#170b25] text-center text-white sm:h-72">
-              <img
-                src={showDownsell === "basic" ? "/images/basic-package.png" : vipDownsellImage}
-                alt={showDownsell === "basic" ? "Exclusive content preview" : "VIP private offer preview"}
-                className="absolute inset-0 h-full w-full object-cover object-center"
-              />
+  {showDownsell === "basic" ? (
+  <video
+  src={basicDownsellVideo}
+  autoPlay
+  muted
+  loop
+  playsInline
+  preload="auto"
+  aria-label="Exclusive video preview"
+  className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center"
+  />
+  ) : (
+  <img
+  src={vipDownsellImage}
+  alt="VIP private offer preview"
+  className="absolute inset-0 h-full w-full object-cover object-center"
+  />
+  )
               <div className="absolute inset-x-0 bottom-0 h-24 bg-gradient-to-t from-black/70 to-transparent" />
             </div>
             <div className="space-y-4 p-5 sm:p-6">
               <div>
                 <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f0008c]">{showDownsell === "basic" ? "Your exclusive discount" : "Your exclusive discount"}</p>
-                <h2 id="downsell-title" className="mt-1 text-xl font-black sm:text-2xl">{showDownsell === "basic" ? "Unlock exclusive videos for less" : "Your VIP discount is ready"}</h2>
-                <p className="mt-1 text-sm font-medium text-[#536078]">This special price is only available right now.</p>
+  <h2 id="downsell-title" className="mt-1 text-xl font-black sm:text-2xl">{showDownsell === "basic" ? "You unlocked 10 extra videos" : "Your VIP discount is ready"}</h2>
+  <p className="mt-1 text-sm font-medium text-[#536078]">{showDownsell === "basic" ? "Enjoy 10 unique bonus videos with your package." : "This special price is only available right now."}</p>
               </div>
               <div className="rounded-2xl border-2 border-[#f0008c]/25 bg-[#fff1f9] p-4">
                 <div className="flex items-center justify-between gap-3">
@@ -265,7 +280,7 @@ export default function PrivPage() {
                 </div>
                 <p className="mt-3 rounded-lg bg-[#f0008c] px-3 py-2 text-center text-sm font-black text-white">{showDownsell === "basic" ? "You save $0.61" : "You save $3.00 — 30% OFF"}</p>
               </div>
-              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#f0008c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]">{showDownsell === "basic" ? "Yes, unlock for $2.99" : "Yes, unlock VIP for $7 — save $3"}</button>
+              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#f0008c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]">{showDownsell === "basic" ? "Yes, unlock 10 bonus videos for $2.99" : "Yes, unlock VIP for $7 — save $3"}</button>
             </div>
           </div>
         </div>
