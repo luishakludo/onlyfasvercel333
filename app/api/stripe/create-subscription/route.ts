@@ -73,9 +73,9 @@ export async function POST(req: Request) {
         planId: plan.id,
         flow,
         modelName: modelName || "Geovanna Pierre",
-        deliverableTier: plan.id === "priv-basic" ? "low" : plan.id === "priv-exclusive" ? "medium" : plan.id === "priv-vip" || plan.id === "priv-vip-downsell" ? "high" : "", 
+        deliverableTier: plan.id === "priv-basic" ? "low" : plan.id === "priv-exclusive" ? "medium" : plan.id === "priv-vip" || plan.id === "priv-vip-downsell" ? "high" : plan.id === "priv-basic" || plan.id === "priv-basic-downsell" ? "low" : "", 
         deliverableUrl:
-          plan.id === "priv-basic"
+          plan.id === "priv-basic" || plan.id === "priv-basic-downsell"
             ? "https://t.me/+7UKq9MZYma5iN2Ux"
             : plan.id === "priv-exclusive"
               ? "https://t.me/+2l9fejrVfcNmZDEx"
