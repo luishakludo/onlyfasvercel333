@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Link from "next/link"
 import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
 
@@ -8,6 +8,35 @@ const coverImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4936166533197663844-cJ8nMNrFT1biLSzOvJThzRP8AcCt0v.jpg"
 const profileImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/790059490_18083216771471493_7120741971286687762_n-SLGBqGlxNyssD7kbPz18TJjJrsny9c.jpg"
+
+const translations = {
+  en: {
+    vip: "🎁 💎 Total VIP Album ⭐ BEST SELLER ⭐",
+    vipDescription: "All albums included 🔥",
+    basic: "📸 Basic package 🌸",
+    basicDescription: "A few selected photos",
+    exclusive: "🎬 Exclusive album 💎",
+    exclusiveDescription: "Selected content for you",
+    flash: "⚡ FLASH SALE, VALID UNTIL 11:00 PM 🔥 ⏰ ⌛ — LIMITED SPOTS FOR THE FIRST 100 💎",
+    vipOffer: "VIP PACKAGE with 60% OFF 💎 🎁 + Bonus",
+    firstAlbum: "special ON THE FIRST ALBUM! 📸",
+    daily: "New content every day",
+    photos: "Photos every day",
+    gift: "Send a little gift",
+    closeDetails: "Close package details",
+    want: "I want this package",
+    privateContent: "Private content",
+    labels: { subscribeTo: "Get access to", emailLabel: "Email", emailPlaceholder: "you@example.com", emailHelp: "Your access details will be sent to this email.", enterEmail: "Enter a valid email.", continue: "Continue to payment", loading: "Loading…", processing: "Processing…", pay: "Pay securely", securedBy: "Secured by Stripe", checkDetails: "Check your payment details.", paymentFailed: "Payment failed. Please try again.", networkError: "Network error. Please try again.", somethingWrong: "Something went wrong. Please try again.", successTitle: "You’re in!", successBodyPre: "Your access is ready. Check ", successBodyPost: " for the details.", done: "Done", close: "Close" },
+  },
+  es: {
+    vip: "🎁 💎 Álbum VIP total ⭐ MÁS VENDIDO ⭐", vipDescription: "Todos los álbumes incluidos 🔥", basic: "📸 Paquete básico 🌸", basicDescription: "Algunas fotos seleccionadas", exclusive: "🎬 Álbum exclusivo 💎", exclusiveDescription: "Contenido seleccionado para ti", flash: "⚡ OFERTA RELÁMPAGO, VÁLIDA HASTA LAS 23:00 🔥 ⏰ ⌛ — PLAZAS LIMITADAS PARA LOS PRIMEROS 100 💎", vipOffer: "PAQUETE VIP con 60% de DESCUENTO 💎 🎁 + Bono", firstAlbum: "especial EN EL PRIMER ÁLBUM! 📸", daily: "Contenido nuevo todos los días", photos: "Fotos todos los días", gift: "Enviar un regalito", closeDetails: "Cerrar detalles del paquete", want: "Quiero este paquete", privateContent: "Contenido privado", labels: { subscribeTo: "Obtén acceso a", emailLabel: "Correo electrónico", emailPlaceholder: "tu@ejemplo.com", emailHelp: "Los datos de acceso se enviarán a este correo.", enterEmail: "Introduce un correo válido.", continue: "Continuar al pago", loading: "Cargando…", processing: "Procesando…", pay: "Pagar de forma segura", securedBy: "Protegido por Stripe", checkDetails: "Revisa los datos de pago.", paymentFailed: "El pago falló. Inténtalo de nuevo.", networkError: "Error de red. Inténtalo de nuevo.", somethingWrong: "Algo salió mal. Inténtalo de nuevo.", successTitle: "¡Ya estás dentro!", successBodyPre: "Tu acceso está listo. Revisa ", successBodyPost: " para ver los detalles.", done: "Listo", close: "Cerrar" },
+  },
+  pt: {
+    vip: "🎁 💎 Álbum VIP total ⭐ MAIS VENDIDO ⭐", vipDescription: "Todos os álbuns inclusos 🔥", basic: "📸 Pacote básico 🌸", basicDescription: "Poucas fotos selecionadas", exclusive: "🎬 Álbum exclusivo 💎", exclusiveDescription: "Conteúdo selecionado para você", flash: "⚡ PROMOÇÃO RELÂMPAGO, VÁLIDA ATÉ AS 23:00 🔥 ⏰ ⌛ — VAGAS LIMITADAS PARA OS 100 PRIMEIROS 💎", vipOffer: "PACOTE VIP com 60% OFF 💎 🎁 + Bônus", firstAlbum: "especial NO PRIMEIRO ÁLBUM! 📸", daily: "Conteúdo novo todos os dias", photos: "Fotos todos os dias", gift: "Enviar presentinho", closeDetails: "Fechar detalhes do pacote", want: "Quero este pacote", privateContent: "Conteúdo privado", labels: { subscribeTo: "Tenha acesso a", emailLabel: "E-mail", emailPlaceholder: "voce@exemplo.com", emailHelp: "Os dados de acesso serão enviados para este e-mail.", enterEmail: "Digite um e-mail válido.", continue: "Continuar para o pagamento", loading: "Carregando…", processing: "Processando…", pay: "Pagar com segurança", securedBy: "Protegido por Stripe", checkDetails: "Confira os dados do pagamento.", paymentFailed: "O pagamento falhou. Tente novamente.", networkError: "Erro de rede. Tente novamente.", somethingWrong: "Algo deu errado. Tente novamente.", successTitle: "Você conseguiu!", successBodyPre: "Seu acesso está pronto. Confira ", successBodyPost: " para ver os detalhes.", done: "Concluído", close: "Fechar" },
+  },
+} as const
+
+type Locale = keyof typeof translations
 
 const offers = [
   {
@@ -38,8 +67,21 @@ const offers = [
 ]
 
 export default function PrivPage() {
+  const [locale, setLocale] = useState<Locale>("en")
   const [selectedOffer, setSelectedOffer] = useState<(typeof offers)[number] | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | null>(null)
+  const t = translations[locale]
+
+  useEffect(() => {
+    const language = navigator.language.toLowerCase()
+    setLocale(language.startsWith("pt") ? "pt" : language.startsWith("es") ? "es" : "en")
+  }, [])
+
+  const localizedOffers = offers.map((offer) => ({
+    ...offer,
+    title: offer.id === "priv-vip" ? t.vip : offer.id === "priv-basic" ? t.basic : t.exclusive,
+    description: offer.id === "priv-vip" ? t.vipDescription : offer.id === "priv-basic" ? t.basicDescription : t.exclusiveDescription,
+  }))
 
   const handleOfferClick = (offer: (typeof offers)[number]) => {
     setSelectedOffer(offer)
@@ -71,15 +113,15 @@ export default function PrivPage() {
 
         <div className="relative z-0 px-5 pb-7 pt-11 text-center font-sans sm:px-10">
           <h1 className="mx-auto max-w-[620px] text-[21px] font-semibold leading-[1.3] tracking-[-0.02em] sm:text-[25px]">
-            ⚡ PROMOÇÃO RELÂMPAGO, VÁLIDO ATÉ AS 23:00H 🔥 ⏰ ⌛ — VAGAS LIMITADAS PARA OS 100 PRIMEIROS 💎
+            {t.flash}
           </h1>
-          <p className="mt-3 text-[18px] font-semibold leading-tight sm:text-[22px]">PACOTE VIP com 60% OFF 💎 🎁 + Bônus</p>
-          <p className="mt-2 text-[17px] font-semibold sm:text-[20px]">especial NO PRIMEIRO ÁLBUM! 📸</p>
-          <p className="mt-4 text-[21px] font-semibold sm:text-[25px]">Conteúdo novo todos os dias</p>
-          <p className="mt-1 text-base font-normal">Fotos todos os dias</p>
+          <p className="mt-3 text-[18px] font-semibold leading-tight sm:text-[22px]">{t.vipOffer}</p>
+          <p className="mt-2 text-[17px] font-semibold sm:text-[20px]">{t.firstAlbum}</p>
+          <p className="mt-4 text-[21px] font-semibold sm:text-[25px]">{t.daily}</p>
+          <p className="mt-1 text-base font-normal">{t.photos}</p>
 
           <div className="mt-7 space-y-5 text-left">
-            {offers.map((offer) => (
+            {localizedOffers.map((offer) => (
               <button
                 key={offer.title}
                 type="button"
@@ -109,7 +151,7 @@ export default function PrivPage() {
               href="/priv"
               className="flex min-h-[76px] items-center justify-between rounded-2xl border-2 border-[#f0008c] px-4 text-[#e50086] shadow-[0_3px_12px_rgba(240,0,140,0.15)] transition hover:bg-[#fff4fb]"
             >
-              <span className="text-lg font-extrabold">Enviar presentinho</span>
+              <span className="text-lg font-extrabold">{t.gift}</span>
               <span aria-hidden="true" className="text-3xl">+</span>
             </Link>
           </div>
@@ -159,7 +201,7 @@ export default function PrivPage() {
                   onClick={openPayment}
                   className="rounded-xl bg-[#f0008c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]"
                 >
-                  Quero este pacote
+{t.want}
                 </button>
               </div>
             </div>
@@ -170,29 +212,9 @@ export default function PrivPage() {
       {selectedOffer && paymentMethod === "stripe" && (
         <StripeCheckoutModal
           plan={{ id: selectedOffer.id, name: selectedOffer.title, price: selectedOffer.price }}
-          modelName="Private content"
+          modelName={t.privateContent}
           colors={{ background: "#f3f6fc", text: "#07142f", subtext: "#536078", accent: "#f0008c", cardBg: "#ffffff" }}
-          labels={{
-            subscribeTo: "Get access to",
-            emailLabel: "Email",
-            emailPlaceholder: "you@example.com",
-            emailHelp: "Your access details will be sent to this email.",
-            enterEmail: "Enter a valid email.",
-            continue: "Continue to payment",
-            loading: "Loading…",
-            processing: "Processing…",
-            pay: "Pay securely",
-            securedBy: "Secured by Stripe",
-            checkDetails: "Check your payment details.",
-            paymentFailed: "Payment failed. Please try again.",
-            networkError: "Network error. Please try again.",
-            somethingWrong: "Something went wrong. Please try again.",
-            successTitle: "You’re in!",
-            successBodyPre: "Your access is ready. Check ",
-            successBodyPost: " for the details.",
-            done: "Done",
-            close: "Close",
-          }}
+          labels={t.labels}
           onClose={closeCheckout}
         />
       )}
