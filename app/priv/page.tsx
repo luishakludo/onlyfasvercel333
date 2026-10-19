@@ -11,26 +11,26 @@ const profileImage =
 
 const offers = [
   {
-    title: "Álbum VIP total",
-    description: "Mais vendido · Todos os álbuns abaixo inclusos neste pacote",
+    title: "🎁 💎 Álbum VIP total ⭐ MAIS VENDIDO ⭐",
+    description: "Todos os álbuns inclusos 🔥",
     price: "R$ 27,99",
     oldPrice: "R$ 127,99",
     accent: "VIP",
     image: "/images/vip-album.png",
   },
   {
-    title: "Álbum exclusivo",
+    title: "📸 Pacote básico 🌸",
+    description: "Poucas fotos, do jeitinho certo",
+    price: "R$ 7,99",
+    accent: "BÁSICO",
+    image: "/images/basic-package.png",
+  },
+  {
+    title: "🎬 Álbum exclusivo 💎",
     description: "Conteúdo selecionado para você",
     price: "R$ 16,99",
     accent: "EXCLUSIVO",
     image: "/images/exclusive-album.png",
-  },
-  {
-    title: "Pacote básico",
-    description: "Com poucas fotos",
-    price: "R$ 7,99",
-    accent: "BÁSICO",
-    image: "/images/basic-package.png",
   },
 ]
 
