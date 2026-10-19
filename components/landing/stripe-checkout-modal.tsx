@@ -61,6 +61,7 @@ type Props = {
   downsell?: boolean
   giftData?: { senderName: string; message: string } | null
   onClose: () => void
+  onDismiss?: () => void
 }
 
 const IconClose = ({ className = "w-5 h-5" }) => (
@@ -208,7 +209,7 @@ function PaymentForm({
   )
 }
 
-export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsProp, deliverable, downsell = false, giftData, onClose }: Props) {
+export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsProp, deliverable, downsell = false, giftData, onClose, onDismiss }: Props) {
   const labels = labelsProp ?? DEFAULT_LABELS
   const showDeliverable = deliverable?.enabled ?? false
   const browserLanguage = typeof navigator !== "undefined" ? navigator.language.toLowerCase() : "en"
@@ -268,7 +269,7 @@ export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsPro
       <button
         type="button"
         aria-label={labels.close}
-        onClick={onClose}
+        onClick={onDismiss ?? onClose}
         className="absolute inset-0 bg-black/50"
       />
 
@@ -292,7 +293,7 @@ export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsPro
           <button
             type="button"
             aria-label={labels.close}
-            onClick={onClose}
+            onClick={onDismiss ?? onClose}
             className="flex h-9 w-9 items-center justify-center rounded-full"
             style={{ color: colors.subtext, backgroundColor: `${colors.subtext}14` }}
           >
