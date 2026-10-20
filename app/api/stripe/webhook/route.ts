@@ -20,6 +20,8 @@ export async function POST(request: Request) {
       case "checkout.session.completed":
       case "checkout.session.async_payment_succeeded": {
         const object = event.data.object as Stripe.Invoice | Stripe.Checkout.Session
+        const paymentStatus = "payment_status" in object ? object.payment_status : object.status
+        if (event.type.startsWith("checkout.session") && paymentStatus !== "paid") break
         console.log("[stripe-webhook] pagamento confirmado", {
           eventId: event.id,
           eventType: event.type,
