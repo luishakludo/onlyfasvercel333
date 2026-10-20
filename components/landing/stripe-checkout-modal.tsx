@@ -244,18 +244,20 @@ export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsPro
     setLoading(true)
     setError(null)
     try {
-      const res = await fetch("/api/stripe/create-checkout-session", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: plan.id, email: email.trim(), modelName, downsell, requestId }),
-      })
-      const data = await res.json()
-      if (!res.ok || typeof data?.url !== "string") {
-        setError(data?.error || labels.somethingWrong)
-        setLoading(false)
-        return
-      }
-      window.location.assign(data.url)
+  const res = await fetch("/api/stripe/create-subscription", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ planId: plan.id, email: email.trim(), modelName, downsell, requestId }),
+  })
+  const data = await res.json()
+  if (!res.ok || typeof data?.clientSecret !== "string") {
+  setError(data?.error || labels.somethingWrong)
+  setLoading(false)
+  return
+  }
+  setClientSecret(data.clientSecret)
+  setPublishableKey(data.publishableKey)
+  setStep("pay")
     } catch {
       setError(labels.networkError)
     } finally {
