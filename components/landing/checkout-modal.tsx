@@ -83,7 +83,9 @@ export function CheckoutModal({
   forceGateway?: "nexuspag" | "hyzepay" | "sigilo"
   startWithCallUpsell?: boolean
   onClose: () => void
-}) {
+  onDismiss?: () => void
+  }) {
+  const handleDismiss = onDismiss ?? onClose
   const [selectedBumps, setSelectedBumps] = useState<Record<string, boolean>>({})
   const [loading, setLoading] = useState(false)
   const [errorMsg, setErrorMsg] = useState("")
@@ -307,7 +309,7 @@ export function CheckoutModal({
 
   return (
     <div className="fixed inset-0 z-50 flex items-end justify-center sm:items-center" role="dialog" aria-modal="true">
-      <button className="absolute inset-0 bg-black/60" onClick={onClose} aria-label="Fechar" />
+      <button className="absolute inset-0 bg-black/60" onClick={handleDismiss} aria-label="Fechar" />
       <div
         className="relative z-10 max-h-[92vh] w-full max-w-md overflow-y-auto rounded-t-3xl sm:rounded-3xl"
         style={{ backgroundColor: colors.cardBg }}
@@ -321,7 +323,7 @@ export function CheckoutModal({
             {paymentConfirmed ? "Pagamento confirmado!" : pix ? "Pague com PIX" : title}
           </h2>
           <button 
-            onClick={onClose} 
+            onClick={handleDismiss}
             aria-label="Fechar" 
             className="rounded-full p-1.5 transition-colors hover:bg-black/5"
             style={{ color: colors.subtext }}
@@ -381,7 +383,7 @@ export function CheckoutModal({
                   )}
 
                   <button
-                    onClick={onClose}
+                    onClick={handleDismiss}
                     className="w-full rounded-full border py-3 text-[14px] font-medium transition-colors hover:bg-black/5"
                     style={{ borderColor: `${colors.subtext}30`, color: colors.text }}
                   >
@@ -564,7 +566,7 @@ export function CheckoutModal({
                   )}
 
                   <button
-                    onClick={onClose}
+                    onClick={handleDismiss}
                     className="w-full rounded-full border py-3 text-[14px] font-medium transition-colors hover:bg-black/5"
                     style={{ borderColor: `${colors.subtext}30`, color: colors.text }}
                   >

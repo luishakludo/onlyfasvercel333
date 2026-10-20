@@ -307,6 +307,7 @@ export default function PrivPage() {
           colors={{ background: "#f3f6fc", text: "#07142f", subtext: "#536078", accent: "#f0008c", cardBg: "#ffffff" }}
           forceGateway="sigilo"
           onClose={closeCheckout}
+          onDismiss={dismissCheckout}
         />
       )}
     </main>
