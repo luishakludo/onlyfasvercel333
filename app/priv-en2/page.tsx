@@ -1,5 +1,6 @@
 "use client"
 
+import useSWR from "swr"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
 
@@ -40,6 +41,20 @@ const translations = {
 } as const
 
 type Locale = keyof typeof translations
+type DisplayCurrency = "USD" | "BRL" | "CLP" | "EUR" | "GBP"
+
+const currencyConfig: Record<DisplayCurrency, { locale: string; rate: number }> = {
+  USD: { locale: "en-US", rate: 1 },
+  BRL: { locale: "pt-BR", rate: 5.2 },
+  CLP: { locale: "es-CL", rate: 950 },
+  EUR: { locale: "de-DE", rate: 0.92 },
+  GBP: { locale: "en-GB", rate: 0.79 },
+}
+
+const formatPrice = (usd: string, currency: DisplayCurrency) => {
+  const amount = Number.parseFloat(usd.replace(/[^0-9.]/g, "")) * currencyConfig[currency].rate
+  return new Intl.NumberFormat(currencyConfig[currency].locale, { style: "currency", currency, maximumFractionDigits: currency === "CLP" ? 0 : 2 }).format(amount)
+}
 
 const offers = [
   {
@@ -69,8 +84,12 @@ const offers = [
   },
 ]
 
+const fetcher = (url: string) => fetch(url).then((response) => response.json())
+
 export default function PrivPage() {
+  const { data: geo } = useSWR<{ country?: string }>("/api/geo", fetcher)
   const [locale, setLocale] = useState<Locale>("en")
+  const [currency, setCurrency] = useState<DisplayCurrency>("USD")
   const [selectedOffer, setSelectedOffer] = useState<(typeof offers)[number] | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | null>(null)
   const [showDownsell, setShowDownsell] = useState<"vip" | "basic" | "exclusive" | "exit" | false>(false)
@@ -91,14 +110,18 @@ export default function PrivPage() {
 
   useEffect(() => {
     const language = navigator.language.toLowerCase()
+    const region = (geo?.country || navigator.language.split("-")[1] || "").toUpperCase()
     setLocale(language.startsWith("pt") ? "pt" : language.startsWith("es") ? "es" : "en")
-  }, [])
+    setCurrency(region === "BR" ? "BRL" : region === "CL" ? "CLP" : region === "PT" || region === "ES" || region === "FR" || region === "DE" ? "EUR" : region === "GB" ? "GBP" : "USD")
+  }, [geo?.country])
 
   const localizedOffers = useMemo(() => offers.map((offer) => ({
     ...offer,
     title: offer.id === "priv-vip" ? t.vip : offer.id === "priv-basic" ? t.basic : t.exclusive,
     description: offer.id === "priv-vip" ? t.vipDescription : offer.id === "priv-basic" ? t.basicDescription : t.exclusiveDescription,
-  })), [t])
+    price: formatPrice(offer.price, currency),
+    oldPrice: offer.oldPrice ? formatPrice(offer.oldPrice, currency) : undefined,
+  })), [t, currency])
 
   const handleOfferClick = (offer: (typeof offers)[number]) => {
     setSelectedOffer(offer)
