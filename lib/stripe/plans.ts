@@ -63,6 +63,13 @@ STRIPE_PLANS["priv-vip-downsell"] = {
   amountCents: 500,
   intervalCount: 1,
 }
+STRIPE_PLANS["priv-exit-downsell"] = {
+  id: "priv-exit-downsell",
+  name: "Exit offer — VIP album",
+  productName: "Priv — Exit offer — VIP album",
+  amountCents: 300,
+  intervalCount: 1,
+}
 STRIPE_PLANS["priv-exclusive-downsell"] = {
   id: "priv-exclusive-downsell",
   name: "Exclusive album — special offer",

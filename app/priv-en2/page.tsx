@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
 
 const coverImage =
@@ -73,9 +73,21 @@ export default function PrivPage() {
   const [locale, setLocale] = useState<Locale>("en")
   const [selectedOffer, setSelectedOffer] = useState<(typeof offers)[number] | null>(null)
   const [paymentMethod, setPaymentMethod] = useState<"stripe" | null>(null)
-  const [showDownsell, setShowDownsell] = useState<"vip" | "basic" | "exclusive" | false>(false)
+  const [showDownsell, setShowDownsell] = useState<"vip" | "basic" | "exclusive" | "exit" | false>(false)
 
   const t = translations[locale]
+  const exitOfferShown = useRef(false)
+
+  useEffect(() => {
+    const handleExitIntent = (event: MouseEvent) => {
+      if (event.clientY <= 0 && !exitOfferShown.current && !selectedOffer && !showDownsell) {
+        exitOfferShown.current = true
+        setShowDownsell("exit")
+      }
+    }
+    document.addEventListener("mouseout", handleExitIntent)
+    return () => document.removeEventListener("mouseout", handleExitIntent)
+  }, [selectedOffer, showDownsell])
 
   useEffect(() => {
     const language = navigator.language.toLowerCase()
@@ -114,7 +126,7 @@ export default function PrivPage() {
   }
 
   const acceptDownsell = () => {
-    const offerId = showDownsell === "basic" ? "priv-basic" : showDownsell === "exclusive" ? "priv-exclusive" : "priv-vip"
+    const offerId = showDownsell === "basic" ? "priv-basic" : showDownsell === "exclusive" ? "priv-exclusive" : showDownsell === "exit" ? "priv-vip" : "priv-vip"
     const offer = localizedOffers.find((item) => item.id === offerId)
     if (!offer) return
     const isBasic = showDownsell === "basic"
@@ -122,9 +134,9 @@ export default function PrivPage() {
     setShowDownsell(false)
     setSelectedOffer({
       ...offer,
-      id: isBasic ? "priv-basic-downsell" : isExclusive ? "priv-exclusive-downsell" : "priv-vip-downsell",
-      price: isBasic ? "$2.99" : isExclusive ? "$6.00" : "$5.00",
-      oldPrice: isBasic ? "$3.60" : isExclusive ? "$9.00" : "$10.00",
+      id: isBasic ? "priv-basic-downsell" : isExclusive ? "priv-exclusive-downsell" : showDownsell === "exit" ? "priv-exit-downsell" : "priv-vip-downsell",
+price: isBasic ? "$2.99" : isExclusive ? "$6.00" : showDownsell === "exit" ? "$3.00" : "$5.00",
+  oldPrice: isBasic ? "$3.60" : isExclusive ? "$9.00" : "$10.00",
     })
     setPaymentMethod("stripe")
   }
@@ -270,18 +282,18 @@ export default function PrivPage() {
             </div>
             <div className="space-y-4 p-5 sm:p-6">
               <div>
-                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f0008c]">{showDownsell === "basic" ? "Your exclusive discount" : showDownsell === "exclusive" ? "VIP album upgrade" : "Your exclusive discount"}</p>
-  <h2 id="downsell-title" className="mt-1 text-xl font-black sm:text-2xl">{showDownsell === "basic" ? "You unlocked 10 extra videos" : showDownsell === "exclusive" ? "Get the VIP album for less" : "Your VIP discount is ready"}</h2>
+                <p className="text-xs font-bold uppercase tracking-[0.16em] text-[#f0008c]">{showDownsell === "basic" ? "Your exclusive discount" : showDownsell === "exclusive" ? "VIP album upgrade" : showDownsell === "exit" ? "Wait — special exit offer" : "Your exclusive discount"}</p>
+  <h2 id="downsell-title" className="mt-1 text-xl font-black sm:text-2xl">{showDownsell === "basic" ? "You unlocked 10 extra videos" : showDownsell === "exclusive" ? "Get the VIP album for less" : showDownsell === "exit" ? "Unlock the VIP album for only $3" : "Your VIP discount is ready"}</h2>
   <p className="mt-1 text-sm font-medium text-[#536078]">{showDownsell === "basic" ? "Enjoy 10 unique bonus videos with your package." : showDownsell === "exclusive" ? "You can upgrade to the complete VIP album at a special price." : "This special price is only available right now."}</p>
               </div>
               <div className="rounded-2xl border-2 border-[#f0008c]/25 bg-[#fff1f9] p-4">
                 <div className="flex items-center justify-between gap-3">
                   <div><p className="text-xs font-bold uppercase tracking-wider text-[#536078]">Regular price</p><p className="text-lg font-bold text-[#536078] line-through">{showDownsell === "basic" ? "$3.60" : "$10.00"}</p></div>
-                  <div className="text-right"><p className="text-xs font-bold uppercase tracking-wider text-[#f0008c]">Today only</p><p className="text-3xl font-black text-[#f0008c]">{showDownsell === "basic" ? "$2.99" : showDownsell === "exclusive" ? "$6.00" : "$5.00"}</p></div>
+                  <div className="text-right"><p className="text-xs font-bold uppercase tracking-wider text-[#f0008c]">Today only</p><p className="text-3xl font-black text-[#f0008c]">{showDownsell === "basic" ? "$2.99" : showDownsell === "exclusive" ? "$6.00" : showDownsell === "exit" ? "$3.00" : "$5.00"}</p></div>
                 </div>
-                <p className="mt-3 rounded-lg bg-[#f0008c] px-3 py-2 text-center text-sm font-black text-white">{showDownsell === "basic" ? "You save $0.61" : showDownsell === "exclusive" ? "You save $4.00 — 40% OFF" : "You save $5.00 — 50% OFF"}</p>
+                <p className="mt-3 rounded-lg bg-[#f0008c] px-3 py-2 text-center text-sm font-black text-white">{showDownsell === "basic" ? "You save $0.61" : showDownsell === "exclusive" ? "You save $4.00 — 40% OFF" : showDownsell === "exit" ? "You save $7.00 — 70% OFF" : "You save $5.00 — 50% OFF"}</p>
               </div>
-              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#f0008c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]">{showDownsell === "basic" ? "Yes, unlock 10 bonus videos for $2.99" : showDownsell === "exclusive" ? "Yes, get the VIP album for $6 — save $4" : "Yes, unlock VIP for $5 — save $5"}</button>
+              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#f0008c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]">{showDownsell === "basic" ? "Yes, unlock 10 bonus videos for $2.99" : showDownsell === "exclusive" ? "Yes, get the VIP album for $6 — save $4" : showDownsell === "exit" ? "Yes, unlock VIP for $3" : "Yes, unlock VIP for $5 — save $5"}</button>
             </div>
           </div>
         </div>

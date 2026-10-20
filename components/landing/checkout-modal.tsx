@@ -69,6 +69,7 @@ export function CheckoutModal({
   forceGateway,
   startWithCallUpsell = false,
   onClose,
+  onDismiss,
 }: {
   plan: SelectedPlan
   modelId?: string
