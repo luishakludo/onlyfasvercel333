@@ -134,8 +134,8 @@ export default function PrivPage() {
     setShowDownsell(false)
     setSelectedOffer({
       ...offer,
-      id: isBasic ? "priv-basic-downsell" : isExclusive ? "priv-exclusive-downsell" : showDownsell === "exit" ? "priv-exit-downsell" : "priv-vip-downsell",
-price: isBasic ? "R$ 6,99" : isExclusive ? "R$ 12,99" : showDownsell === "exit" ? "R$ 9,99" : "R$ 14,99",
+  id: "offer",
+  price: isBasic ? "R$ 6,99" : isExclusive ? "R$ 12,99" : showDownsell === "exit" ? "R$ 9,99" : "R$ 14,99",
   oldPrice: isBasic ? "R$ 7,99" : isExclusive ? "R$ 16,99" : "R$ 27,99",
     })
     setPaymentMethod("sigilo")

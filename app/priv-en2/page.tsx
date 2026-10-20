@@ -157,9 +157,9 @@ export default function PrivPage() {
     setShowDownsell(false)
     setSelectedOffer({
       ...offer,
-      id: isBasic ? "priv-basic-downsell" : isExclusive ? "priv-exclusive-downsell" : showDownsell === "exit" ? "priv-exit-downsell" : "priv-vip-downsell",
-price: isBasic ? "$2.99" : isExclusive ? "$6.00" : showDownsell === "exit" ? "$3.00" : "$5.00",
-  oldPrice: isBasic ? "$3.60" : isExclusive ? "$9.00" : "$10.00",
+  id: "offer",
+  price: formatPrice(isBasic ? "$2.99" : isExclusive ? "$6.00" : showDownsell === "exit" ? "$3.00" : "$5.00", currency),
+  oldPrice: formatPrice(isBasic ? "$3.60" : isExclusive ? "$9.00" : "$10.00", currency),
     })
     setPaymentMethod("stripe")
   }
@@ -311,12 +311,12 @@ price: isBasic ? "$2.99" : isExclusive ? "$6.00" : showDownsell === "exit" ? "$3
               </div>
               <div className="rounded-2xl border-2 border-[#f0008c]/25 bg-[#fff1f9] p-4">
                 <div className="flex items-center justify-between gap-3">
-                  <div><p className="text-xs font-bold uppercase tracking-wider text-[#536078]">Regular price</p><p className="text-lg font-bold text-[#536078] line-through">{showDownsell === "basic" ? "$3.60" : "$10.00"}</p></div>
-                  <div className="text-right"><p className="text-xs font-bold uppercase tracking-wider text-[#f0008c]">Today only</p><p className="text-3xl font-black text-[#f0008c]">{showDownsell === "basic" ? "$2.99" : showDownsell === "exclusive" ? "$6.00" : showDownsell === "exit" ? "$3.00" : "$5.00"}</p></div>
+                  <div><p className="text-xs font-bold uppercase tracking-wider text-[#536078]">Regular price</p><p className="text-lg font-bold text-[#536078] line-through">{formatPrice(showDownsell === "basic" ? "$3.60" : "$10.00", currency)}</p></div>
+                  <div className="text-right"><p className="text-xs font-bold uppercase tracking-wider text-[#f0008c]">Today only</p><p className="text-3xl font-black text-[#f0008c]">{formatPrice(showDownsell === "basic" ? "$2.99" : showDownsell === "exclusive" ? "$6.00" : showDownsell === "exit" ? "$3.00" : "$5.00", currency)}</p></div>
                 </div>
                 <p className="mt-3 rounded-lg bg-[#f0008c] px-3 py-2 text-center text-sm font-black text-white">{showDownsell === "basic" ? "You save $0.61" : showDownsell === "exclusive" ? "You save $4.00 — 40% OFF" : showDownsell === "exit" ? "You save $7.00 — 70% OFF" : "You save $5.00 — 50% OFF"}</p>
               </div>
-              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#00f58b] px-5 py-3.5 text-sm font-extrabold text-[#062a1a] shadow-[0_6px_16px_rgba(57,217,138,0.3)] transition hover:bg-[#24c477]">{showDownsell === "basic" ? "Yes, unlock 10 bonus videos for $2.99" : showDownsell === "exclusive" ? "Yes, get the VIP album for $6 — save $4" : showDownsell === "exit" ? "Yes, unlock VIP for $3" : "Yes, unlock VIP for $5 — save $5"}</button>
+              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#00f58b] px-5 py-3.5 text-sm font-extrabold text-[#062a1a] shadow-[0_6px_16px_rgba(57,217,138,0.3)] transition hover:bg-[#24c477]">{showDownsell === "basic" ? `Yes, unlock 10 bonus videos for ${formatPrice("$2.99", currency)}` : showDownsell === "exclusive" ? `Yes, get the VIP album for ${formatPrice("$6.00", currency)} — save ${formatPrice("$4.00", currency)}` : showDownsell === "exit" ? `Yes, unlock VIP for ${formatPrice("$3.00", currency)}` : `Yes, unlock VIP for ${formatPrice("$5.00", currency)} — save ${formatPrice("$5.00", currency)}`}</button>
             </div>
           </div>
         </div>
@@ -327,6 +327,7 @@ price: isBasic ? "$2.99" : isExclusive ? "$6.00" : showDownsell === "exit" ? "$3
           plan={{ id: selectedOffer.id, name: selectedOffer.title, price: selectedOffer.price }}
           modelName={t.privateContent}
           colors={{ background: "#f3f6fc", text: "#07142f", subtext: "#536078", accent: "#00f58b", cardBg: "#ffffff" }}
+          downsell={selectedOffer.id === "offer"}
           labels={t.labels}
           deliverable={{
             enabled: true,
