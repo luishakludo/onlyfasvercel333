@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react"
 import { loadStripe, type Stripe as StripeJs } from "@stripe/stripe-js"
-import { Elements, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
+import { Elements, ExpressCheckoutElement, PaymentElement, useElements, useStripe } from "@stripe/react-stripe-js"
 import type { StripeLabels } from "@/lib/i18n/onlyfans-content"
 
 // Textos padrão (inglês) usados quando nenhuma tradução é fornecida.
@@ -182,9 +182,30 @@ function PaymentForm({
     onSuccess()
   }
 
+  const handleExpressConfirm = async () => {
+    if (!stripe || !elements) return
+    setSubmitting(true)
+    const result = await stripe.confirmPayment({
+      elements,
+      confirmParams: { return_url: `${window.location.origin}/priv` },
+      redirect: "if_required",
+    })
+    if (result.error) setError(result.error.message || labels.paymentFailed)
+    else if (result.paymentIntent?.status === "succeeded") onSuccess()
+    setSubmitting(false)
+  }
+
   return (
-    <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <PaymentElement options={{ layout: "tabs" }} />
+  <form onSubmit={handleSubmit} className="flex flex-col gap-4">
+  <ExpressCheckoutElement
+    options={{
+      buttonType: { applePay: "buy", googlePay: "buy" },
+      buttonTheme: { applePay: "black", googlePay: "black" },
+      layout: { maxColumns: 1, maxRows: 1 },
+    }}
+    onConfirm={handleExpressConfirm}
+  />
+  <PaymentElement options={{ layout: "tabs" }} />
 
       {error && (
         <p className="text-[13px] font-medium" style={{ color: "#e11d48" }}>

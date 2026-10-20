@@ -33,14 +33,16 @@ export async function getOrCreatePriceId(params: {
   productName: string
   amountCents: number
   intervalCount: number
+  currency?: string
 }): Promise<string> {
-  const cacheKey = `${params.planKey}:${params.amountCents}:${params.intervalCount}`
+  const currency = params.currency ?? "usd"
+  const cacheKey = `${params.planKey}:${currency}:${params.amountCents}:${params.intervalCount}`
   const cached = priceCache.get(cacheKey)
   if (cached) return cached
 
   const stripe = getStripe()
   const price = await stripe.prices.create({
-    currency: "usd",
+    currency,
     unit_amount: params.amountCents,
     recurring: { interval: "month", interval_count: params.intervalCount },
     product_data: { name: params.productName },

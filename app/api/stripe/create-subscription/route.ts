@@ -17,6 +17,15 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json().catch(() => ({}))
+    const country = (req.headers.get("x-vercel-ip-country") || "US").toUpperCase()
+    const currencyByCountry: Record<string, { code: string; rate: number }> = {
+      BR: { code: "brl", rate: 5.2 }, CL: { code: "clp", rate: 950 },
+      PT: { code: "eur", rate: 0.92 }, ES: { code: "eur", rate: 0.92 },
+      FR: { code: "eur", rate: 0.92 }, DE: { code: "eur", rate: 0.92 },
+      IT: { code: "eur", rate: 0.92 }, NL: { code: "eur", rate: 0.92 },
+      GB: { code: "gbp", rate: 0.79 },
+    }
+    const regionalCurrency = currencyByCountry[country] || { code: "usd", rate: 1 }
     const rawPlanId = String(body?.planId ?? "")
     const isDownsell = body?.downsell === true
 
@@ -60,8 +69,9 @@ export async function POST(req: Request) {
     const priceId = await getOrCreatePriceId({
       planKey: plan.id,
       productName: plan.productName,
-      amountCents: plan.amountCents,
+      amountCents: Math.round(plan.amountCents * regionalCurrency.rate),
       intervalCount: plan.intervalCount,
+      currency: regionalCurrency.code,
     })
 
     const subscription = await stripe.subscriptions.create({
@@ -107,7 +117,9 @@ export async function POST(req: Request) {
       clientSecret,
       publishableKey: STRIPE_PUBLISHABLE_KEY,
       subscriptionId: subscription.id,
-      amountCents: plan.amountCents,
+      amountCents: Math.round(plan.amountCents * regionalCurrency.rate),
+      currency: regionalCurrency.code,
+      country,
     })
   } catch (err) {
     console.log("[v0] Stripe create-subscription error:", (err as Error).message)
