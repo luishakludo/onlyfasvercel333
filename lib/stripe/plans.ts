@@ -78,6 +78,14 @@ STRIPE_PLANS["priv-basic-downsell"] = {
   intervalCount: 1,
 }
 
+STRIPE_PLANS["1dolar"] = {
+  id: "1dolar",
+  name: "One dollar access",
+  productName: "One dollar access",
+  amountCents: 100,
+  intervalCount: 1,
+}
+
 export function getStripePlan(id: string): StripePlan | undefined {
   return STRIPE_PLANS[id]
 }
