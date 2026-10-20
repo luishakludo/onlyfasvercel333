@@ -171,7 +171,7 @@ price: isBasic ? "$2.99" : isExclusive ? "$6.00" : showDownsell === "exit" ? "$3
                 key={offer.id}
                 type="button"
                 onClick={() => handleOfferClick(offer)}
-                className="group flex min-h-[76px] w-full items-center gap-3 rounded-2xl border border-[#39d98a]/45 bg-white px-3.5 py-2.5 text-left shadow-[0_5px_18px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(0,0,0,0.14)]"
+                className="group flex min-h-[76px] w-full items-center gap-3 rounded-2xl border border-black/[0.04] bg-white px-3.5 py-2.5 text-left shadow-[0_5px_18px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(0,0,0,0.14)]"
               >
                 {offer.image ? (
                   <img
@@ -303,7 +303,7 @@ price: isBasic ? "$2.99" : isExclusive ? "$6.00" : showDownsell === "exit" ? "$3
         <StripeCheckoutModal
           plan={{ id: selectedOffer.id, name: selectedOffer.title, price: selectedOffer.price }}
           modelName={t.privateContent}
-          colors={{ background: "#f3f6fc", text: "#07142f", subtext: "#536078", accent: "#f0008c", cardBg: "#ffffff" }}
+          colors={{ background: "#f3f6fc", text: "#07142f", subtext: "#536078", accent: "#39d98a", cardBg: "#ffffff" }}
           labels={t.labels}
           deliverable={{
             enabled: true,

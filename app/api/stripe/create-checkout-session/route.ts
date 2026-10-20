@@ -25,6 +25,7 @@ export async function POST(request: Request) {
       success_url: `${origin}/priv-en2?checkout=success&session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${origin}/priv-en2?checkout=cancelled`,
       adaptive_pricing: { enabled: true },
+      locale: "auto",
       billing_address_collection: "auto",
       metadata: { planId: plan.id, modelName: modelName || "Geovanna Pierre" },
       subscription_data: { metadata: { planId: plan.id, modelName: modelName || "Geovanna Pierre" } },
