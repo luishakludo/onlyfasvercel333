@@ -11,6 +11,7 @@ const profileImage =
 
 const offers = [
   {
+    id: "priv-vip",
     title: "🎁 💎 Álbum VIP total ⭐ MAIS VENDIDO ⭐",
     description: "Todos os álbuns inclusos 🔥",
     price: "R$ 27,99",
@@ -19,6 +20,7 @@ const offers = [
     image: "/images/vip-album.png",
   },
   {
+    id: "priv-basic",
     title: "📸 Pacote básico 🌸",
     description: "Poucas fotos, do jeitinho certo",
     price: "R$ 7,99",
@@ -26,6 +28,7 @@ const offers = [
     image: "/images/basic-package.png",
   },
   {
+    id: "priv-exclusive",
     title: "🎬 Álbum exclusivo 💎",
     description: "Conteúdo selecionado para você",
     price: "R$ 16,99",
@@ -166,7 +169,7 @@ export default function PrivPage() {
 
       {selectedOffer && paymentMethod === "sigilo" && (
         <CheckoutModal
-          plan={{ id: selectedOffer.title, name: selectedOffer.title, price: selectedOffer.price }}
+          plan={{ id: selectedOffer.id, name: selectedOffer.title, price: selectedOffer.price }}
           modelName="Conteúdo exclusivo"
           orderBumps={[]}
           title="Pagamento seguro"
