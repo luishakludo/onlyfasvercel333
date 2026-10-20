@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     }
 
     const body = await req.json().catch(() => ({}))
-    const country = (req.headers.get("x-vercel-ip-country") || "US").toUpperCase()
+    const country = (typeof body?.country === "string" ? body.country : req.headers.get("x-vercel-ip-country") || "US").toUpperCase()
     const currencyByCountry: Record<string, { code: string; rate: number }> = {
       BR: { code: "brl", rate: 5.2 }, CL: { code: "clp", rate: 950 },
       PT: { code: "eur", rate: 0.92 }, ES: { code: "eur", rate: 0.92 },

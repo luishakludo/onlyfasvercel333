@@ -201,7 +201,8 @@ function PaymentForm({
     options={{
       buttonType: { applePay: "buy", googlePay: "buy" },
       buttonTheme: { applePay: "black", googlePay: "black" },
-      layout: { maxColumns: 1, maxRows: 1 },
+      wallets: { applePay: "auto", googlePay: "auto" },
+      layout: { maxColumns: 2, maxRows: 1 },
     }}
     onConfirm={handleExpressConfirm}
   />
@@ -245,6 +246,7 @@ export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsPro
   const deliverableButtonUrl = deliverable?.buttonUrl?.trim() || ""
   const [step, setStep] = useState<"email" | "pay" | "success">("email")
   const [email, setEmail] = useState("")
+  const [country, setCountry] = useState("US")
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [clientSecret, setClientSecret] = useState<string | null>(null)
@@ -265,10 +267,14 @@ export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsPro
     setLoading(true)
     setError(null)
     try {
-  const res = await fetch("/api/stripe/create-subscription", {
+      const geoResponse = await fetch("/api/geo")
+      const geo = await geoResponse.json().catch(() => ({}))
+      const detectedCountry = typeof geo?.country === "string" ? geo.country.toUpperCase() : country
+      setCountry(detectedCountry)
+      const res = await fetch("/api/stripe/create-subscription", {
   method: "POST",
   headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ planId: plan.id, email: email.trim(), modelName, downsell, requestId }),
+  body: JSON.stringify({ planId: plan.id, email: email.trim(), modelName, downsell, requestId, country: detectedCountry }),
   })
   const data = await res.json()
   if (!res.ok || typeof data?.clientSecret !== "string") {
