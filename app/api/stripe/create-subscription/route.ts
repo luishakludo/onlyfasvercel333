@@ -27,6 +27,9 @@ export async function POST(req: Request) {
     const planId = rawPlanId === "1" ? "1m" : isExplicitDownsell ? "offer" : rawPlanId
     const email = typeof body?.email === "string" ? body.email.trim() : ""
     const modelName = typeof body?.modelName === "string" ? body.modelName.trim() : ""
+    const requestId = typeof body?.requestId === "string" && /^[a-zA-Z0-9_-]{16,100}$/.test(body.requestId)
+      ? body.requestId
+      : crypto.randomUUID()
     const flow = modelName.toLowerCase().includes("pierre") ? "gpen-en" : "other"
     const deliverableUrl = flow === "gpen-en" ? "https://t.me/+UxuYArZGWiBjNjAx" : ""
 
@@ -52,7 +55,7 @@ export async function POST(req: Request) {
     }
 
     const stripe = getStripe()
-    const customer = await stripe.customers.create({ email })
+    const customer = await stripe.customers.create({ email }, { idempotencyKey: `customer-${requestId}` })
 
     const priceId = await getOrCreatePriceId({
       planKey: plan.id,
@@ -85,7 +88,7 @@ export async function POST(req: Request) {
                   ? "https://t.me/+UxuYArZGWiBjNjAx"
                   : "",
       },
-    })
+    }, { idempotencyKey: `subscription-${requestId}` })
 
     const invoice = subscription.latest_invoice as Stripe.Invoice
     // Novo formato (API 2025+): latest_invoice.confirmation_secret.client_secret

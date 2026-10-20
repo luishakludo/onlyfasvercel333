@@ -228,6 +228,7 @@ export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsPro
   const [error, setError] = useState<string | null>(null)
   const [clientSecret, setClientSecret] = useState<string | null>(null)
   const [publishableKey, setPublishableKey] = useState<string | null>(null)
+  const requestId = useMemo(() => crypto.randomUUID(), [])
 
   const stripePromise = useMemo<Promise<StripeJs | null> | null>(
     () => (publishableKey ? loadStripe(publishableKey) : null),
@@ -246,7 +247,7 @@ export function StripeCheckoutModal({ plan, modelName, colors, labels: labelsPro
       const res = await fetch("/api/stripe/create-subscription", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ planId: plan.id, email: email.trim(), modelName, downsell }),
+        body: JSON.stringify({ planId: plan.id, email: email.trim(), modelName, downsell, requestId }),
       })
       const data = await res.json()
       if (!res.ok) {
