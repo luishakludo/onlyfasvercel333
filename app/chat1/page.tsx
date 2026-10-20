@@ -18,7 +18,7 @@ export default async function Chat1RedirectPage() {
   const country = getCountry(requestHeaders)
 
   if (country === "BR") {
-    redirect("https://t.me/geovannapierrebot")
+    redirect("/priv")
   }
 
   redirect("/priv-en2")

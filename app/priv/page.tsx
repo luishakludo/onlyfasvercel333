@@ -171,7 +171,7 @@ price: isBasic ? "R$ 6,99" : isExclusive ? "R$ 12,99" : showDownsell === "exit" 
                 key={offer.id}
                 type="button"
                 onClick={() => handleOfferClick(offer)}
-                className="group flex min-h-[76px] w-full items-center gap-3 rounded-2xl border border-black/[0.04] bg-white px-3.5 py-2.5 text-left shadow-[0_5px_18px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(0,0,0,0.14)]"
+                className="group flex min-h-[76px] w-full items-center gap-3 rounded-2xl border border-[#39d98a]/45 bg-white px-3.5 py-2.5 text-left shadow-[0_5px_18px_rgba(0,0,0,0.10)] transition hover:-translate-y-0.5 hover:shadow-[0_8px_22px_rgba(0,0,0,0.14)]"
               >
                 {offer.image ? (
                   <img
@@ -243,7 +243,7 @@ price: isBasic ? "R$ 6,99" : isExclusive ? "R$ 12,99" : showDownsell === "exit" 
                 <button
                   type="button"
                   onClick={openPayment}
-                  className="rounded-xl bg-[#f0008c] px-5 py-3 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]"
+                  className="rounded-xl bg-[#39d98a] px-5 py-3 text-sm font-extrabold text-[#062a1a] shadow-[0_6px_16px_rgba(57,217,138,0.3)] transition hover:bg-[#24c477]"
                 >
 {t.want}
                 </button>
@@ -293,7 +293,7 @@ price: isBasic ? "R$ 6,99" : isExclusive ? "R$ 12,99" : showDownsell === "exit" 
                 </div>
                 <p className="mt-3 rounded-lg bg-[#f0008c] px-3 py-2 text-center text-sm font-black text-white">{showDownsell === "basic" ? "Você economiza R$ 1,00" : showDownsell === "exclusive" ? "Você economiza R$ 4,00 — 24% OFF" : showDownsell === "exit" ? "Você economiza R$ 18,00 — 64% OFF" : "Você economiza R$ 13,00 — 46% OFF"}</p>
               </div>
-              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#f0008c] px-5 py-3.5 text-sm font-extrabold text-white shadow-[0_6px_16px_rgba(240,0,140,0.25)] transition hover:bg-[#d9007c]">{showDownsell === "basic" ? "Sim, desbloquear 10 vídeos por R$ 6,99" : showDownsell === "exclusive" ? "Sim, quero o Álbum VIP por R$ 12,99" : showDownsell === "exit" ? "Sim, quero o Álbum VIP por R$ 9,99" : "Sim, quero o VIP por R$ 14,99"}</button>
+              <button type="button" onClick={acceptDownsell} className="w-full rounded-xl bg-[#39d98a] px-5 py-3.5 text-sm font-extrabold text-[#062a1a] shadow-[0_6px_16px_rgba(57,217,138,0.3)] transition hover:bg-[#24c477]">{showDownsell === "basic" ? "Sim, desbloquear 10 vídeos por R$ 6,99" : showDownsell === "exclusive" ? "Sim, quero o Álbum VIP por R$ 12,99" : showDownsell === "exit" ? "Sim, quero o Álbum VIP por R$ 9,99" : "Sim, quero o VIP por R$ 14,99"}</button>
             </div>
           </div>
         </div>
