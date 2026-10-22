@@ -6,8 +6,7 @@ import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
 
 const coverImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4936166533197663844-cJ8nMNrFT1biLSzOvJThzRP8AcCt0v.jpg"
-const profileImage =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/790059490_18083216771471493_7120741971286687762_n-SLGBqGlxNyssD7kbPz18TJjJrsny9c.jpg"
+const profileImage = "/images/priv-en3-profile.jpg"
 const vipDownsellImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image%20%285%29-eJzUdNRtv0CMdrYRNQac8wpA3DN9Fd.png"
 const basicDownsellVideo =
