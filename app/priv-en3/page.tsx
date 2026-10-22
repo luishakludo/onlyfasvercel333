@@ -9,7 +9,7 @@ const coverImage =
 const profileImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/photo_5102618888402308436_x-MuUfzG592DTKQ2TvH1U0kvsadd0F3b.jpg"
 const vipDownsellImage =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image%20%285%29-eJzUdNRtv0CMdrYRNQac8wpA3DN9Fd.png"
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/photo_5102692130479607016_y-TOJt6Qs82vuor2nqVUaOltvOGiMWBF.jpg"
 const basicDownsellVideo =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/El_mejor_pack_de_esta_deliciosa_brasile%C3%B1a_2026_brasileira_ruiva-p7wVl1yG2ssD4kRo2o52Esa1oW8QIa.mp4"
 
