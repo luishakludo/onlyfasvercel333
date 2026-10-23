@@ -13,7 +13,7 @@ function getCountry(requestHeaders: Headers) {
   ).trim().toUpperCase()
 }
 
-export default async function Chat3RedirectPage() {
+export default async function NatallyRedirectPage() {
   const requestHeaders = await headers()
   const country = getCountry(requestHeaders)
 
