@@ -64,7 +64,7 @@ const offers = [
     price: "$10.00",
     oldPrice: "$49.99",
     accent: "VIP",
-    image: "/images/vip-album.png",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image%20%289%29-WPCDof2qYvXMBZ4QRaSlExCFF96sDO.png",
   },
   {
     id: "priv-basic",
