@@ -72,7 +72,7 @@ const offers = [
     description: "A few selected photos",
     price: "$3.60",
     accent: "BASIC",
-    image: "/images/basic-package.png",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image%20%287%29-KX4aV2mISYuWMQ8S6B9R1Sh8UmqOJ3.png",
   },
   {
     id: "priv-exclusive",
