@@ -80,7 +80,7 @@ const offers = [
     description: "Selected content for you",
     price: "$9.00",
     accent: "EXCLUSIVE",
-    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image%20%2810%29-Eh0BjwUidyxWt7bT3KyMIJUwUYMMu3.png",
+    image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/image%20%288%29-xkTwNYv1Y7DMxfgcP73hmpbtWGeDyZ.png",
   },
 ]
 
