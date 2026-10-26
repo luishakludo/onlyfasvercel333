@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
 
 const coverImage =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4936166533197663844-cJ8nMNrFT1biLSzOvJThzRP8AcCt0v-rT5UREaQZ0rY8KRN3uv8ihfUHuTwCY.jpg"
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Retrato%20%C3%ADntimo%20de%20pele%20muito%20clara-8xPLa37Y7GKujQ04SfyD7uQd4nm0Cn.png"
 const profileImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/850184837_18113339345008575_3827207660214246354_n-cmPuKviAQn86RBn9fNcN92Y3FNs9DA.jpg"
 const vipDownsellImage =
