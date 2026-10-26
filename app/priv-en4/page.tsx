@@ -5,9 +5,9 @@ import { useEffect, useMemo, useRef, useState } from "react"
 import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
 
 const coverImage =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/photo_5102618888402308435_x-Sq51aO1dOYuIzmY0680vX5ENAyztcC.jpg"
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/4936166533197663844-cJ8nMNrFT1biLSzOvJThzRP8AcCt0v-rT5UREaQZ0rY8KRN3uv8ihfUHuTwCY.jpg"
 const profileImage =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/photo_5102618888402308436_x-MuUfzG592DTKQ2TvH1U0kvsadd0F3b.jpg"
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/850184837_18113339345008575_3827207660214246354_n-cmPuKviAQn86RBn9fNcN92Y3FNs9DA.jpg"
 const vipDownsellImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/photo_5102692130479607016_y-TOJt6Qs82vuor2nqVUaOltvOGiMWBF.jpg"
 const basicDownsellVideo =
