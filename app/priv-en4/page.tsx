@@ -11,7 +11,7 @@ const profileImage =
 const vipDownsellImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/photo_5102692130479607016_y-TOJt6Qs82vuor2nqVUaOltvOGiMWBF.jpg"
 const basicDownsellVideo =
-  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/El_mejor_pack_de_esta_deliciosa_brasile%C3%B1a_2026_brasileira_ruiva-p7wVl1yG2ssD4kRo2o52Esa1oW8QIa.mp4"
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/73a50d68-b29e-4f2f-b137-ed1c9460410b-Chamzci3odvuIIGsQCHwlaKJsKTlsD.mp4"
 
 const translations = {
   en: {
