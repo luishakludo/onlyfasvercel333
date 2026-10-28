@@ -9,6 +9,8 @@ const coverImage =
 const profileImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/850184837_18113339345008575_3827207660214246354_n-cmPuKviAQn86RBn9fNcN92Y3FNs9DA.jpg"
 const vipDownsellImage =
+  "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/298538-ThACTz97wXCebERbTe2B9tBm3nh9gt.jpeg"
+const exitDownsellImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/photo_5102692130479607016_y-TOJt6Qs82vuor2nqVUaOltvOGiMWBF.jpg"
 const basicDownsellVideo =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/73a50d68-b29e-4f2f-b137-ed1c9460410b-Chamzci3odvuIIGsQCHwlaKJsKTlsD.mp4"
@@ -296,7 +298,7 @@ export default function PrivEn4Page() {
   />
   ) : (
   <img
-  src={vipDownsellImage}
+  src={showDownsell === "exit" ? exitDownsellImage : vipDownsellImage}
   alt="VIP private offer preview"
   className="absolute inset-0 h-full w-full object-cover object-center"
   />
