@@ -2,8 +2,6 @@
 
 import useSWR from "swr"
 import { useEffect, useMemo, useRef, useState } from "react"
-import { StripeCheckoutModal } from "@/components/landing/stripe-checkout-modal"
-
 const coverImage =
   "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/photo_5102618888402308435_x-Sq51aO1dOYuIzmY0680vX5ENAyztcC.jpg"
 const profileImage =
@@ -128,9 +126,16 @@ export default function PrivEn5Page() {
     setPaymentMethod(null)
   }
 
+  const paymentLinks: Record<string, string> = {
+    "priv-vip": "https://pay.kiwify.com/1YQGFxc",
+    "priv-basic": "https://pay.kiwify.com/dfDxmHf",
+    "priv-exclusive": "https://pay.kiwify.com/vEu7jdV",
+  }
+
   const openPayment = () => {
-    // A página /priv usa sempre PIX direto, sem formulário de e-mail.
-    setPaymentMethod("stripe")
+    if (!selectedOffer) return
+    const paymentLink = paymentLinks[selectedOffer.id]
+    if (paymentLink) window.location.assign(paymentLink)
   }
 
   const closeCheckout = () => {
@@ -322,34 +327,6 @@ export default function PrivEn5Page() {
         </div>
       )}
 
-      {selectedOffer && paymentMethod === "stripe" && (
-        <StripeCheckoutModal
-          plan={{ id: selectedOffer.id, name: selectedOffer.title, price: selectedOffer.price }}
-          modelName={t.privateContent}
-          colors={{ background: "#f3f6fc", text: "#07142f", subtext: "#536078", accent: "#00f58b", cardBg: "#ffffff" }}
-          downsell={selectedOffer.id === "offer"}
-          labels={t.labels}
-          deliverable={{
-            enabled: true,
-            tier: selectedOffer.id === "priv-basic" || selectedOffer.id === "priv-basic-downsell" ? "low" : selectedOffer.id === "priv-exclusive" ? "medium" : "high",
-            title: "Payment approved!",
-            description: selectedOffer.id === "priv-basic"
-              ? "Your basic access has been unlocked."
-              : selectedOffer.id === "priv-exclusive"
-                ? "Your medium access has been unlocked."
-                : "Your high access has been unlocked.",
-            buttonText: "Access your content",
-            buttonUrl: selectedOffer.id === "priv-basic"
-              ? "https://t.me/+7UKq9MZYma5iN2Ux"
-              : selectedOffer.id === "priv-exclusive"
-                ? "https://t.me/+2l9fejrVfcNmZDEx"
-                : "https://t.me/+r1wJP767rDA0Mjcx",
-          }}
-
-          onClose={closeCheckout}
-          onDismiss={dismissCheckout}
-        />
-      )}
     </main>
   )
 }
