@@ -21,5 +21,5 @@ export default async function Natally2RedirectPage() {
     redirect("https://t.me/natallyazedabot")
   }
 
-  redirect("/priv-en4")
+  redirect("/priv-en3")
 }
