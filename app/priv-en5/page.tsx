@@ -68,7 +68,7 @@ const offers = [
     id: "priv-basic",
     title: "📸 Basic package 🌸",
     description: "A few selected photos",
-    price: "$3.60",
+    price: "$5.00",
     accent: "BASIC",
     image: "/images/basic-package.png",
   },
