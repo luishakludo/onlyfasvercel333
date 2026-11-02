@@ -51,7 +51,8 @@ const currencyConfig: Record<DisplayCurrency, { locale: string; rate: number }> 
 }
 
 const formatPrice = (usd: string, currency: DisplayCurrency) => {
-  const amount = Number.parseFloat(usd.replace(/[^0-9.]/g, "")) * currencyConfig[currency].rate
+  const baseAmount = Number.parseFloat(usd.replace(/[^0-9.]/g, ""))
+  const amount = currency === "EUR" && baseAmount === 3.6 ? baseAmount : baseAmount * currencyConfig[currency].rate
   return new Intl.NumberFormat(currencyConfig[currency].locale, { style: "currency", currency, maximumFractionDigits: currency === "CLP" ? 0 : 2 }).format(amount)
 }
 
@@ -69,7 +70,7 @@ const offers = [
     id: "priv-basic",
     title: "📸 Basic package 🌸",
     description: "A few selected photos",
-    price: "$5.00",
+    price: "$3.60",
     accent: "BASIC",
     image: "/images/priv-en2-basic.png",
   },
@@ -127,14 +128,27 @@ export default function PrivPage() {
     setPaymentMethod(null)
   }
 
-  const openPayment = () => {
-    const checkoutUrls: Record<string, string> = {
-      "priv-vip": "https://pay.kiwify.com/31YRxqA",
-      "priv-basic": "https://pay.kiwify.com/llEidHt",
-      "priv-exclusive": "https://pay.kiwify.com/CiScZoZ",
+  const openPayment = async () => {
+    if (!selectedOffer) return
+    setPaymentMethod("stripe")
+    const response = await fetch("/api/nitro/create", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        offerId: selectedOffer.id,
+        currency,
+        paymentMethod: "card",
+        name: "Cliente Link Priv",
+        email: "checkout@linkpriv.com",
+      }),
+    })
+    const payload = await response.json().catch(() => ({}))
+    if (!response.ok || typeof payload.checkoutUrl !== "string") {
+      setPaymentMethod(null)
+      window.alert(payload.error || "Não foi possível iniciar o pagamento.")
+      return
     }
-    const checkoutUrl = checkoutUrls[selectedOffer?.id ?? ""]
-    if (checkoutUrl) window.location.assign(checkoutUrl)
+    window.location.assign(payload.checkoutUrl)
   }
 
   const closeCheckout = () => {

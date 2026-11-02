@@ -2,8 +2,8 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 const requestSchema = z.object({
-  amount: z.number().min(0.5),
-  currency: z.enum(["USD", "GBP", "MXN"]),
+  offerId: z.enum(["priv-vip", "priv-basic", "priv-exclusive"]),
+  currency: z.enum(["USD", "BRL", "CLP", "EUR", "GBP"]),
   paymentMethod: z.enum(["card", "klarna"]),
   name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(160),
@@ -25,6 +25,12 @@ export async function POST(request: Request) {
     }
 
     const credentials = Buffer.from(`${publicKey}:${privateKey}`).toString("base64")
+    const usdPrices = { "priv-vip": 10, "priv-basic": 3.6, "priv-exclusive": 9 } as const
+    const conversionRates = { USD: 1, BRL: 5.2, CLP: 950, EUR: 1, GBP: 0.79 } as const
+    const usdAmount = usdPrices[parsed.data.offerId]
+    const amount = usdAmount === 3.6 && parsed.data.currency === "EUR"
+      ? 3.6
+      : usdAmount * conversionRates[parsed.data.currency]
     const origin = new URL(request.url).origin
     const response = await fetch(NITRO_API_URL, {
       method: "POST",
@@ -33,7 +39,7 @@ export async function POST(request: Request) {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        amount: parsed.data.amount,
+        amount: Number(amount.toFixed(parsed.data.currency === "CLP" ? 0 : 2)),
         currency: parsed.data.currency,
         payment_method: parsed.data.paymentMethod,
         description: "Teste de checkout Nitro",
