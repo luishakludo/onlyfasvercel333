@@ -5,9 +5,21 @@ export const metadata: Metadata = {
   description: 'Seu pagamento foi aprovado. Acesse seu produto pelo botão abaixo.',
 }
 
-const accessUrl = 'https://t.me/+r1wJP767rDA0Mjcx'
+const accessUrls = {
+  'priv-en5': 'https://t.me/+ZPkv-9wuams2OWMx',
+  'priv-en6': 'https://t.me/+r1wJP767rDA0Mjcx',
+} as const
 
-export default function EntregaPage() {
+type Product = keyof typeof accessUrls
+
+export default async function EntregaPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ product?: string }>
+}) {
+  const params = await searchParams
+  const product = params.product as Product
+  const accessUrl = accessUrls[product] ?? accessUrls['priv-en5']
   return (
     <main className="flex min-h-screen items-center justify-center bg-[#0b0d0f] px-5 py-12 text-white">
       <section className="w-full max-w-lg rounded-[2rem] border border-white/10 bg-[#15181c] p-7 text-center shadow-2xl shadow-black/30 sm:p-10">

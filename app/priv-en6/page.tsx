@@ -140,6 +140,7 @@ export default function PrivPage() {
         paymentMethod: "card",
         name: "Cliente Link Priv",
         email: "checkout@linkpriv.com",
+        deliveryProduct: "priv-en6",
       }),
     })
     const payload = await response.json().catch(() => ({}))

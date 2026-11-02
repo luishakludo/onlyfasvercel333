@@ -7,6 +7,7 @@ const requestSchema = z.object({
   paymentMethod: z.enum(["card", "klarna"]),
   name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(160),
+  deliveryProduct: z.enum(["priv-en5", "priv-en6"]),
 })
 
 const NITRO_API_URL = "https://api.nitropagamento.app"
@@ -49,9 +50,11 @@ export async function POST(request: Request) {
         },
         metadata: {
           order_id: `cartao-${Date.now()}`,
+          delivery_product: parsed.data.deliveryProduct,
         },
         source_url: `${origin}/cartao`,
-        return_url: `${origin}/cartao`,
+        return_url: `${origin}/entrega?product=${parsed.data.deliveryProduct}`,
+        webhook_url: `${origin}/api/nitro/webhook`,
       }),
       cache: "no-store",
     })
