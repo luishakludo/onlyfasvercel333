@@ -30,7 +30,8 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         title: "Teste de pagamento IronPay",
         sale_page: new URL("/cartao2", request.url).toString(),
-        image_url: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/298538-ThACTz97wXCebERbTe2B9tBm3nh9gt.jpeg",
+        image: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/298538-ThACTz97wXCebERbTe2B9tBm3nh9gt.jpeg",
+        cover: "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/298538-ThACTz97wXCebERbTe2B9tBm3nh9gt.jpeg",
         payment_type: 1,
         product_type: "digital",
         delivery_type: 1,
