@@ -1,13 +1,13 @@
 "use client"
 
 import { FormEvent, useState } from "react"
-import { ArrowRight, CheckCircle2, CreditCard, LockKeyhole, QrCode } from "lucide-react"
+import { ArrowRight, CheckCircle2, CreditCard, LockKeyhole } from "lucide-react"
 
 export default function Cartao2Page() {
   const [name, setName] = useState("")
   const [email, setEmail] = useState("")
   const [amount, setAmount] = useState("5.00")
-  const [paymentMethod, setPaymentMethod] = useState("pix")
+  const paymentMethod = "credit_card"
   const [error, setError] = useState("")
   const [result, setResult] = useState("")
   const [loading, setLoading] = useState(false)
@@ -59,7 +59,7 @@ export default function Cartao2Page() {
               <label className="block text-sm font-semibold">Nome completo<input required value={name} onChange={(event) => setName(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="Nome do cliente" /></label>
               <label className="block text-sm font-semibold">E-mail<input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="cliente@email.com" /></label>
               <label className="block text-sm font-semibold">Valor em reais<input required min="0.01" step="0.01" type="number" value={amount} onChange={(event) => setAmount(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" /></label>
-              <fieldset><legend className="mb-3 text-sm font-semibold">Método de pagamento</legend><div className="grid grid-cols-3 gap-2">{[["pix", "PIX"], ["credit_card", "Cartão"], ["boleto", "Boleto"]].map(([value, label]) => <label key={value} className={`cursor-pointer rounded-xl border p-3 text-center text-sm ${paymentMethod === value ? "border-[#2f6df6] bg-[#eef4ff] text-[#2258ce]" : "border-[#dfe5ef] text-[#72809a]"}`}><input className="sr-only" type="radio" name="method" value={value} checked={paymentMethod === value} onChange={(event) => setPaymentMethod(event.target.value)} />{value === "pix" ? <QrCode className="mx-auto mb-1" size={18} aria-hidden="true" /> : null}{label}</label>)}</div></fieldset>
+              <fieldset><legend className="mb-3 text-sm font-semibold">Método de pagamento</legend><div className="flex items-center gap-3 rounded-xl border border-[#2f6df6] bg-[#eef4ff] px-4 py-3 text-sm font-medium text-[#2258ce]"><CreditCard size={18} aria-hidden="true" /> Cartão de crédito</div></fieldset>
               {error ? <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p> : null}
               {result ? <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{result}</p> : null}
               <button disabled={loading} className="flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-[#2f6df6] px-5 font-semibold text-white transition hover:bg-[#2258ce] disabled:opacity-60" type="submit">{loading ? "Criando transação..." : "Criar pagamento"}{!loading && <ArrowRight size={18} aria-hidden="true" />}</button>

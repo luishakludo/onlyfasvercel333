@@ -5,7 +5,7 @@ const schema = z.object({
   name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(160),
   amount: z.number().min(1).max(100000000),
-  paymentMethod: z.enum(["pix", "credit_card", "boleto"]),
+  paymentMethod: z.literal("credit_card"),
 })
 
 const baseUrl = "https://api.ironpayapp.com.br/api/public/v1"
@@ -30,6 +30,7 @@ export async function POST(request: Request) {
       body: JSON.stringify({
         title: "Teste de pagamento IronPay",
         sale_page: new URL("/cartao2", request.url).toString(),
+        image_url: new URL("/images/basic-package.png", request.url).toString(),
         payment_type: 1,
         product_type: "digital",
         delivery_type: 1,
