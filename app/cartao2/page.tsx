@@ -8,6 +8,10 @@ type Currency = "BRL" | "USD"
 export default function Cartao2Page() {
   const [email, setEmail] = useState("")
   const [currency, setCurrency] = useState<Currency>("BRL")
+  const [cardNumber, setCardNumber] = useState("")
+  const [holderName, setHolderName] = useState("")
+  const [expiration, setExpiration] = useState("")
+  const [cvv, setCvv] = useState("")
   const [error, setError] = useState("")
   const [result, setResult] = useState("")
   const [loading, setLoading] = useState(false)
@@ -24,6 +28,13 @@ export default function Cartao2Page() {
         body: JSON.stringify({
           email,
           currency,
+          card: {
+            number: cardNumber.replace(/\D/g, ""),
+            holder_name: holderName,
+            expiration_month: expiration.split("/")[0] || "",
+            expiration_year: expiration.split("/")[1]?.length === 2 ? `20${expiration.split("/")[1]}` : expiration.split("/")[1] || "",
+            cvv,
+          },
         }),
       })
       const payload = await response.json()
@@ -62,6 +73,10 @@ export default function Cartao2Page() {
               <fieldset><legend className="mb-3 text-sm font-semibold">Moeda</legend><div className="grid grid-cols-2 gap-3">{(["BRL", "USD"] as const).map((option) => <label key={option} className={`cursor-pointer rounded-xl border px-4 py-3 text-center text-sm font-semibold transition ${currency === option ? "border-[#2f6df6] bg-[#eef4ff] text-[#2258ce]" : "border-[#dfe5ef] text-[#72809a]"}`}><input className="sr-only" type="radio" name="currency" value={option} checked={currency === option} onChange={() => setCurrency(option)} />{option}</label>)}</div></fieldset>
               <label className="block text-sm font-semibold">E-mail<input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="cliente@email.com" autoComplete="email" /></label>
               <div className="rounded-xl bg-[#f5f7fb] px-4 py-3 text-sm text-[#72809a]">Total: <strong className="text-[#13213b]">{currency === "USD" ? "US$ 5,00" : "R$ 5,00"}</strong></div>
+              <p className="text-xs leading-5 text-[#72809a]">A IronPay exige os dados do cartão para transações diretas. Use os dados reais do cartão ou o cartão de teste oficial da sua conta.</p>
+              <label className="block text-sm font-semibold">Número do cartão<input required inputMode="numeric" autoComplete="cc-number" value={cardNumber} onChange={(event) => setCardNumber(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="0000 0000 0000 0000" /></label>
+              <label className="block text-sm font-semibold">Nome no cartão<input required autoComplete="cc-name" value={holderName} onChange={(event) => setHolderName(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 uppercase outline-none focus:border-[#2f6df6]" placeholder="NOME COMO IMPRESSO NO CARTÃO" /></label>
+              <div className="grid grid-cols-2 gap-3"><label className="block text-sm font-semibold">Validade<input required inputMode="numeric" autoComplete="cc-exp" value={expiration} onChange={(event) => setExpiration(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="MM/AA" /></label><label className="block text-sm font-semibold">CVV<input required inputMode="numeric" autoComplete="cc-csc" value={cvv} onChange={(event) => setCvv(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="123" /></label></div>
               <fieldset><legend className="mb-3 text-sm font-semibold">Método de pagamento</legend><div className="flex items-center gap-3 rounded-xl border border-[#2f6df6] bg-[#eef4ff] px-4 py-3 text-sm font-medium text-[#2258ce]"><CreditCard size={18} aria-hidden="true" /> Cartão de crédito</div></fieldset>
               {error ? <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p> : null}
               {result ? <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{result}</p> : null}

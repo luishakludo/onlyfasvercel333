@@ -4,6 +4,13 @@ import { z } from "zod"
 const schema = z.object({
   email: z.string().trim().email().max(160),
   currency: z.enum(["BRL", "USD"]),
+  card: z.object({
+    number: z.string().regex(/^\d{13,19}$/),
+    holder_name: z.string().trim().min(2).max(120),
+    expiration_month: z.string().regex(/^(0[1-9]|1[0-2])$/),
+    expiration_year: z.string().regex(/^\d{4}$/),
+    cvv: z.string().regex(/^\d{3,4}$/),
+  }),
 })
 
 const FIXED_AMOUNT = 5
@@ -65,6 +72,7 @@ export async function POST(request: Request) {
         offer_hash: offerHash,
         customer: { name: CUSTOMER_NAME, email: parsed.data.email },
         cart: [{ product_hash: productHash, offer_hash: offerHash, quantity: 1, price: FIXED_AMOUNT * 100 }],
+        card: parsed.data.card,
       }),
       cache: "no-store",
     })
