@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 
-const FIXED_AMOUNT = 2
+const FIXED_AMOUNT = 5
 const FIXED_CURRENCY = "USD"
 const CUSTOMER_NAME = "Cliente Priv"
 
