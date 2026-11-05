@@ -19,6 +19,18 @@ const PAYMENT_METHOD = "credit_card"
 
 const baseUrl = "https://api.ironpayapp.com.br/api/public/v1"
 
+function describeIronPayError(payload: unknown, status: number) {
+  if (!payload || typeof payload !== "object") {
+    return `IronPay respondeu HTTP ${status} sem detalhes.`
+  }
+
+  const response = payload as Record<string, unknown>
+  const detail = response.message || response.error || response.errors || response.details || response.code
+  if (typeof detail === "string") return `IronPay HTTP ${status}: ${detail}`
+  if (detail && typeof detail === "object") return `IronPay HTTP ${status}: ${JSON.stringify(detail)}`
+  return `IronPay respondeu HTTP ${status}, mas não informou a causa.`
+}
+
 export async function POST(request: Request) {
   try {
     const parsed = schema.safeParse(await request.json())
@@ -56,7 +68,7 @@ export async function POST(request: Request) {
 
     const product = await productResponse.json().catch(() => ({}))
     if (!productResponse.ok) {
-      return NextResponse.json({ error: product?.message || "Não foi possível criar o produto IronPay." }, { status: productResponse.status })
+      return NextResponse.json({ error: describeIronPayError(product, productResponse.status) }, { status: productResponse.status })
     }
 
     const productHash = product?.hash || product?.data?.hash || product?.product?.hash
@@ -81,7 +93,7 @@ export async function POST(request: Request) {
     })
     const transaction = await transactionResponse.json().catch(() => ({}))
     if (!transactionResponse.ok) {
-      return NextResponse.json({ error: transaction?.message || "Não foi possível criar a transação IronPay." }, { status: transactionResponse.status })
+      return NextResponse.json({ error: describeIronPayError(transaction, transactionResponse.status) }, { status: transactionResponse.status })
     }
 
     return NextResponse.json({

@@ -43,7 +43,10 @@ export default function Cartao2Page() {
         }),
       })
       const payload = await response.json()
-      if (!response.ok) throw new Error(payload.error || "A IronPay recusou a transação.")
+      if (!response.ok) {
+        const fieldErrors = payload.fields ? Object.entries(payload.fields).map(([field, messages]) => `${field}: ${(messages as string[]).join(", ")}`).join(" | ") : ""
+        throw new Error([payload.error, fieldErrors].filter(Boolean).join(" "))
+      }
       if (payload.checkoutUrl) {
         window.location.assign(payload.checkoutUrl)
         return
