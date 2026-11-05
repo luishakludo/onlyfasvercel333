@@ -7,6 +7,7 @@ const schema = z.object({
 })
 
 const FIXED_AMOUNT = 5
+const CUSTOMER_NAME = "Cliente Priv"
 const PAYMENT_METHOD = "credit_card"
 
 const baseUrl = "https://api.ironpayapp.com.br/api/public/v1"
@@ -62,7 +63,7 @@ export async function POST(request: Request) {
         payment_method: PAYMENT_METHOD,
         product_hash: productHash,
         offer_hash: offerHash,
-        customer: { email: parsed.data.email },
+        customer: { name: CUSTOMER_NAME, email: parsed.data.email },
         cart: [{ product_hash: productHash, offer_hash: offerHash, quantity: 1, price: FIXED_AMOUNT * 100 }],
       }),
       cache: "no-store",
