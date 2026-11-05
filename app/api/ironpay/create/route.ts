@@ -3,12 +3,23 @@ import { z } from "zod"
 
 const FIXED_AMOUNT = 5
 const FIXED_CURRENCY = "USD"
-const CUSTOMER_NAME = "Cliente Priv"
 
 const schema = z.object({
   email: z.string().trim().email().max(160),
   currency: z.literal(FIXED_CURRENCY),
   card_token: z.string().trim().min(1).max(255),
+  customer: z.object({
+    name: z.string().trim().min(2).max(120),
+    phone_number: z.string().trim().min(8).max(20),
+    document: z.string().trim().min(5).max(20),
+    street_name: z.string().trim().min(2).max(160),
+    number: z.string().trim().min(1).max(20),
+    complement: z.string().trim().max(80).optional().default(""),
+    neighborhood: z.string().trim().min(2).max(100),
+    city: z.string().trim().min(2).max(100),
+    state: z.string().trim().min(2).max(40),
+    zip_code: z.string().trim().min(4).max(12),
+  }),
 })
 const PAYMENT_METHOD = "credit_card"
 
@@ -89,7 +100,7 @@ export async function POST(request: Request) {
         payment_method: PAYMENT_METHOD,
         product_hash: productHash,
         offer_hash: offerHash,
-        customer: { name: CUSTOMER_NAME, email: parsed.data.email },
+        customer: { ...parsed.data.customer, email: parsed.data.email },
         cart: [{ product_hash: productHash, offer_hash: offerHash, quantity: 1, price: FIXED_AMOUNT * 100 }],
         card_token: parsed.data.card_token,
       }),
