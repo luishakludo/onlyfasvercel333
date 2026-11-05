@@ -43,7 +43,7 @@ function describeIronPayError(payload: unknown, status: number) {
   const detail = response.message || response.error || response.errors || response.details || response.code || response.raw
   if (typeof detail === "string") return `IronPay HTTP ${status}: ${detail}`
   if (detail && typeof detail === "object") return `IronPay HTTP ${status}: ${JSON.stringify(detail)}`
-  return `IronPay HTTP ${status}: a IronPay não informou o campo inválido.`
+  return `IronPay HTTP ${status}: ${JSON.stringify(response)}`
 }
 
 export async function POST(request: Request) {
@@ -76,7 +76,6 @@ export async function POST(request: Request) {
         delivery_type: 1,
         id_category: 1,
         amount: FIXED_AMOUNT * 100,
-        currency: parsed.data.currency,
       }),
       cache: "no-store",
     })
