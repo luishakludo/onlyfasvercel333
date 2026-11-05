@@ -1,14 +1,15 @@
 import { NextResponse } from "next/server"
 import { z } from "zod"
 
+const FIXED_AMOUNT = 2
+const FIXED_CURRENCY = "USD"
+const CUSTOMER_NAME = "Cliente Priv"
+
 const schema = z.object({
   email: z.string().trim().email().max(160),
-  currency: z.enum(["BRL", "USD"]),
+  currency: z.literal(FIXED_CURRENCY),
   card_token: z.string().trim().min(1).max(255),
 })
-
-const FIXED_AMOUNT = 5
-const CUSTOMER_NAME = "Cliente Priv"
 const PAYMENT_METHOD = "credit_card"
 
 const baseUrl = "https://api.ironpayapp.com.br/api/public/v1"
