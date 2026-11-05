@@ -7,8 +7,8 @@ const schema = z.object({
   card: z.object({
     number: z.string().regex(/^\d{13,19}$/),
     holder_name: z.string().trim().min(2).max(120),
-    expiration_month: z.string().regex(/^(0[1-9]|1[0-2])$/),
-    expiration_year: z.string().regex(/^\d{4}$/),
+    exp_month: z.number().int().min(1).max(12),
+    exp_year: z.number().int().min(new Date().getFullYear()).max(new Date().getFullYear() + 20),
     cvv: z.string().regex(/^\d{3,4}$/),
   }),
 })
@@ -23,7 +23,10 @@ export async function POST(request: Request) {
   try {
     const parsed = schema.safeParse(await request.json())
     if (!parsed.success) {
-      return NextResponse.json({ error: "Confira os dados do pagamento." }, { status: 400 })
+      return NextResponse.json({
+        error: "Confira os dados do pagamento.",
+        fields: parsed.error.flatten().fieldErrors,
+      }, { status: 400 })
     }
 
     const token = process.env.IRONPAY_API_TOKEN?.trim()

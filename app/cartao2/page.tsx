@@ -31,8 +31,8 @@ export default function Cartao2Page() {
           card: {
             number: cardNumber.replace(/\D/g, ""),
             holder_name: holderName,
-            expiration_month: expiration.split("/")[0] || "",
-            expiration_year: expiration.split("/")[1]?.length === 2 ? `20${expiration.split("/")[1]}` : expiration.split("/")[1] || "",
+            exp_month: Number(expiration.split("/")[0] || 0),
+            exp_year: Number(expiration.split("/")[1]?.length === 2 ? `20${expiration.split("/")[1]}` : expiration.split("/")[1] || 0),
             cvv,
           },
         }),
