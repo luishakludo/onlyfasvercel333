@@ -14,16 +14,25 @@ const PAYMENT_METHOD = "credit_card"
 
 const baseUrl = "https://api.ironpayapp.com.br/api/public/v1"
 
-function describeIronPayError(payload: unknown, status: number) {
-  if (!payload || typeof payload !== "object") {
-    return `IronPay respondeu HTTP ${status} sem detalhes.`
+async function readIronPayResponse(response: Response) {
+  const text = await response.text()
+  if (!text) return {}
+  try {
+    return JSON.parse(text) as unknown
+  } catch {
+    return { raw: text }
   }
+}
+
+function describeIronPayError(payload: unknown, status: number) {
+  if (typeof payload === "string") return `IronPay HTTP ${status}: ${payload}`
+  if (!payload || typeof payload !== "object") return `IronPay HTTP ${status}: resposta vazia.`
 
   const response = payload as Record<string, unknown>
-  const detail = response.message || response.error || response.errors || response.details || response.code
+  const detail = response.message || response.error || response.errors || response.details || response.code || response.raw
   if (typeof detail === "string") return `IronPay HTTP ${status}: ${detail}`
   if (detail && typeof detail === "object") return `IronPay HTTP ${status}: ${JSON.stringify(detail)}`
-  return `IronPay respondeu HTTP ${status}, mas não informou a causa.`
+  return `IronPay HTTP ${status}: a IronPay não informou o campo inválido.`
 }
 
 export async function POST(request: Request) {
@@ -61,7 +70,7 @@ export async function POST(request: Request) {
       cache: "no-store",
     })
 
-    const product = await productResponse.json().catch(() => ({}))
+    const product = await readIronPayResponse(productResponse)
     if (!productResponse.ok) {
       return NextResponse.json({ error: describeIronPayError(product, productResponse.status) }, { status: productResponse.status })
     }
@@ -86,7 +95,7 @@ export async function POST(request: Request) {
       }),
       cache: "no-store",
     })
-    const transaction = await transactionResponse.json().catch(() => ({}))
+    const transaction = await readIronPayResponse(transactionResponse)
     if (!transactionResponse.ok) {
       return NextResponse.json({ error: describeIronPayError(transaction, transactionResponse.status) }, { status: transactionResponse.status })
     }
