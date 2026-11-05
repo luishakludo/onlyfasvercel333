@@ -57,11 +57,7 @@ function CheckoutForm() {
         if (confirmation.paymentIntent?.status !== "succeeded") throw new Error(`A Stripe retornou o status: ${confirmation.paymentIntent?.status || "desconhecido"}.`)
       }
 
-      if (payload.checkoutUrl) {
-        window.location.assign(payload.checkoutUrl)
-        return
-      }
-      setResult("Pagamento enviado com sucesso para processamento.")
+      setResult("Pagamento enviado com sucesso para processamento. Nenhum link externo foi aberto.")
     } catch (requestError) {
       setError(requestError instanceof Error ? requestError.message : "Não foi possível processar o pagamento.")
     } finally {
@@ -74,12 +70,12 @@ function CheckoutForm() {
       <div className="rounded-xl border border-[#2f6df6] bg-[#eef4ff] px-4 py-3 text-sm font-semibold text-[#2258ce]">Cobrança internacional em dólar (USD)</div>
       <label className="block text-sm font-semibold">E-mail<input required type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="cliente@email.com" autoComplete="email" /></label>
       <div className="rounded-xl bg-[#f5f7fb] px-4 py-3 text-sm text-[#72809a]">Total: <strong className="text-[#13213b]">US$ 2,00</strong></div>
-      <p className="text-xs leading-5 text-[#72809a]">O cartão é tokenizado pela Stripe. O número e o CVV não passam pelo servidor desta aplicação.</p>
+      <p className="text-xs leading-5 text-[#72809a]">Preencha os dados do cartão aqui. A Stripe tokeniza o cartão com segurança; o número e o CVV não passam pelo servidor desta aplicação.</p>
       <label className="block text-sm font-semibold">Dados do cartão<div className="mt-2 rounded-xl border border-[#dfe5ef] px-4 py-4 focus-within:border-[#2f6df6]"><CardElement options={{ hidePostalCode: true, style: { base: { color: "#13213b", fontSize: "16px", fontFamily: "inherit", "::placeholder": { color: "#72809a" } }, invalid: { color: "#dc2626" } } }} /></div></label>
       <fieldset><legend className="mb-3 text-sm font-semibold">Método de pagamento</legend><div className="flex items-center gap-3 rounded-xl border border-[#2f6df6] bg-[#eef4ff] px-4 py-3 text-sm font-medium text-[#2258ce]"><CreditCard size={18} aria-hidden="true" /> Cartão de crédito</div></fieldset>
       {error ? <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p> : null}
       {result ? <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{result}</p> : null}
-      <button disabled={loading || !stripe} className="flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-[#2f6df6] px-5 font-semibold text-white transition hover:bg-[#2258ce] disabled:opacity-60" type="submit">{loading ? "Processando pagamento..." : "Continuar para pagamento"}{!loading && <ArrowRight size={18} aria-hidden="true" />}</button>
+      <button disabled={loading || !stripe} className="flex h-13 w-full items-center justify-center gap-2 rounded-xl bg-[#2f6df6] px-5 font-semibold text-white transition hover:bg-[#2258ce] disabled:opacity-60" type="submit">{loading ? "Processando pagamento..." : "Pagar US$ 2,00"}{!loading && <ArrowRight size={18} aria-hidden="true" />}</button>
     </form>
   )
 }
