@@ -5,6 +5,11 @@ import { ArrowRight, CheckCircle2, CreditCard, LockKeyhole } from "lucide-react"
 
 type Currency = "BRL" | "USD"
 
+function formatExpiration(value: string) {
+  const digits = value.replace(/\D/g, "").slice(0, 4)
+  return digits.length > 2 ? `${digits.slice(0, 2)}/${digits.slice(2)}` : digits
+}
+
 export default function Cartao2Page() {
   const [email, setEmail] = useState("")
   const [currency, setCurrency] = useState<Currency>("BRL")
@@ -76,7 +81,7 @@ export default function Cartao2Page() {
               <p className="text-xs leading-5 text-[#72809a]">A IronPay exige os dados do cartão para transações diretas. Use os dados reais do cartão ou o cartão de teste oficial da sua conta.</p>
               <label className="block text-sm font-semibold">Número do cartão<input required inputMode="numeric" autoComplete="cc-number" value={cardNumber} onChange={(event) => setCardNumber(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="0000 0000 0000 0000" /></label>
               <label className="block text-sm font-semibold">Nome no cartão<input required autoComplete="cc-name" value={holderName} onChange={(event) => setHolderName(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 uppercase outline-none focus:border-[#2f6df6]" placeholder="NOME COMO IMPRESSO NO CARTÃO" /></label>
-              <div className="grid grid-cols-2 gap-3"><label className="block text-sm font-semibold">Validade<input required inputMode="numeric" autoComplete="cc-exp" value={expiration} onChange={(event) => setExpiration(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="MM/AA" /></label><label className="block text-sm font-semibold">CVV<input required inputMode="numeric" autoComplete="cc-csc" value={cvv} onChange={(event) => setCvv(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="123" /></label></div>
+              <div className="grid grid-cols-2 gap-3"><label className="block text-sm font-semibold">Validade<input required inputMode="numeric" autoComplete="cc-exp" value={expiration} onChange={(event) => setExpiration(formatExpiration(event.target.value))} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="MM/AA" maxLength={5} /></label><label className="block text-sm font-semibold">CVV<input required inputMode="numeric" autoComplete="cc-csc" value={cvv} onChange={(event) => setCvv(event.target.value)} className="mt-2 h-12 w-full rounded-xl border border-[#dfe5ef] px-4 outline-none focus:border-[#2f6df6]" placeholder="123" /></label></div>
               <fieldset><legend className="mb-3 text-sm font-semibold">Método de pagamento</legend><div className="flex items-center gap-3 rounded-xl border border-[#2f6df6] bg-[#eef4ff] px-4 py-3 text-sm font-medium text-[#2258ce]"><CreditCard size={18} aria-hidden="true" /> Cartão de crédito</div></fieldset>
               {error ? <p role="alert" className="rounded-xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p> : null}
               {result ? <p role="status" className="rounded-xl bg-emerald-50 px-4 py-3 text-sm text-emerald-700">{result}</p> : null}
