@@ -2,18 +2,12 @@ import { NextResponse } from "next/server"
 import { z } from "zod"
 
 const schema = z.object({
-  name: z.string().trim().min(2).max(120),
   email: z.string().trim().email().max(160),
-  amount: z.number().min(5).max(100000000),
-  paymentMethod: z.literal("credit_card"),
-  card: z.object({
-    number: z.string().regex(/^\d{13,19}$/),
-    holder_name: z.string().trim().min(2).max(120),
-    expiration_month: z.string().regex(/^(0[1-9]|1[0-2])$/),
-    expiration_year: z.string().regex(/^\d{4}$/),
-    cvv: z.string().regex(/^\d{3,4}$/),
-  }),
+  currency: z.enum(["BRL", "USD"]),
 })
+
+const FIXED_AMOUNT = 5
+const PAYMENT_METHOD = "credit_card"
 
 const baseUrl = "https://api.ironpayapp.com.br/api/public/v1"
 
@@ -43,7 +37,8 @@ export async function POST(request: Request) {
         product_type: "digital",
         delivery_type: 1,
         id_category: 1,
-        amount: Math.round(parsed.data.amount * 100),
+        amount: FIXED_AMOUNT * 100,
+        currency: parsed.data.currency,
       }),
       cache: "no-store",
     })
@@ -62,13 +57,13 @@ export async function POST(request: Request) {
       method: "POST",
       headers,
       body: JSON.stringify({
-        amount: Math.round(parsed.data.amount * 100),
-        payment_method: parsed.data.paymentMethod,
+        amount: FIXED_AMOUNT * 100,
+        currency: parsed.data.currency,
+        payment_method: PAYMENT_METHOD,
         product_hash: productHash,
         offer_hash: offerHash,
-        customer: { name: parsed.data.name, email: parsed.data.email },
-        cart: [{ product_hash: productHash, offer_hash: offerHash, quantity: 1, price: Math.round(parsed.data.amount * 100) }],
-        card: parsed.data.card,
+        customer: { email: parsed.data.email },
+        cart: [{ product_hash: productHash, offer_hash: offerHash, quantity: 1, price: FIXED_AMOUNT * 100 }],
       }),
       cache: "no-store",
     })
