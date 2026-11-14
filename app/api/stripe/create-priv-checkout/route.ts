@@ -18,9 +18,9 @@ const requestSchema = z.object({
 })
 
 const offerPricesUsd: Record<string, number> = {
-  "priv-vip": 15,
+  "priv-vip": 20,
   "priv-basic": 9.6,
-  "priv-exclusive": 13.9,
+  "priv-exclusive": 18,
   "priv-vip-discount": 5,
   "priv-basic-discount": 2.99,
   "priv-exclusive-discount": 6,
@@ -28,9 +28,9 @@ const offerPricesUsd: Record<string, number> = {
 }
 
 const fixedMainPrices: Record<string, Record<"USD" | "BRL" | "EUR" | "GBP", number>> = {
-  "priv-vip": { USD: 15, BRL: 20, EUR: 15, GBP: 15 },
+  "priv-vip": { USD: 20, BRL: 20, EUR: 20, GBP: 20 },
   "priv-basic": { USD: 9.6, BRL: 9.6, EUR: 9.6, GBP: 9.6 },
-  "priv-exclusive": { USD: 13.9, BRL: 18, EUR: 13.9, GBP: 13.9 },
+  "priv-exclusive": { USD: 18, BRL: 18, EUR: 18, GBP: 18 },
 }
 
 const convertedDiscountRates: Record<string, number> = {

@@ -51,9 +51,9 @@ const currencyConfig: Record<DisplayCurrency, { locale: string; rate: number }> 
 }
 
 const fixedPrices: Record<string, Partial<Record<DisplayCurrency, number>>> = {
-  "priv-vip": { USD: 15, BRL: 20, EUR: 15, GBP: 15 },
+  "priv-vip": { USD: 20, BRL: 20, EUR: 20, GBP: 20 },
   "priv-basic": { USD: 9.6, BRL: 9.6, EUR: 9.6, GBP: 9.6 },
-  "priv-exclusive": { USD: 13.9, BRL: 18, EUR: 13.9, GBP: 13.9 },
+  "priv-exclusive": { USD: 18, BRL: 18, EUR: 18, GBP: 18 },
 }
 
 const formatPrice = (usd: string, currency: DisplayCurrency, offerId?: string) => {
