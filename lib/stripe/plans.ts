@@ -46,14 +46,14 @@ STRIPE_PLANS["priv-exclusive"] = {
   id: "priv-exclusive",
   name: "Exclusive album",
   productName: "Acesso a conteúdo digital",
-  amountCents: 1390,
+  amountCents: 1800,
   intervalCount: 1,
 }
 STRIPE_PLANS["priv-vip"] = {
   id: "priv-vip",
   name: "Total VIP album",
   productName: "Acesso a conteúdo digital",
-  amountCents: 1500,
+  amountCents: 2000,
   intervalCount: 1,
 }
 STRIPE_PLANS["priv-vip-downsell"] = {
