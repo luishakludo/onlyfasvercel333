@@ -1,0 +1,128 @@
+import { NextResponse } from "next/server"
+import type Stripe from "stripe"
+import { getStripe, getOrCreatePriceId } from "@/lib/stripe/server"
+import { getStripePlan } from "@/lib/stripe/plans"
+import { STRIPE_KEYS_MISSING, STRIPE_PUBLISHABLE_KEY } from "@/lib/stripe/keys"
+
+export async function POST(req: Request) {
+  try {
+    if (STRIPE_KEYS_MISSING) {
+      return NextResponse.json(
+        {
+          error:
+            "As chaves da Stripe não estão configuradas. Defina STRIPE_SECRET_KEY e NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY nas variáveis de ambiente do servidor (Netlify: Site settings -> Environment variables).",
+        },
+        { status: 500 },
+      )
+    }
+
+    const body = await req.json().catch(() => ({}))
+    const country = (typeof body?.country === "string" ? body.country : req.headers.get("x-vercel-ip-country") || "US").toUpperCase()
+    const currencyByCountry: Record<string, { code: string; rate: number }> = {
+      BR: { code: "brl", rate: 5.2 }, CL: { code: "clp", rate: 950 },
+      PT: { code: "eur", rate: 0.92 }, ES: { code: "eur", rate: 0.92 },
+      FR: { code: "eur", rate: 0.92 }, DE: { code: "eur", rate: 0.92 },
+      IT: { code: "eur", rate: 0.92 }, NL: { code: "eur", rate: 0.92 },
+      GB: { code: "gbp", rate: 0.79 },
+    }
+    const regionalCurrency = currencyByCountry[country] || { code: "usd", rate: 1 }
+    const rawPlanId = String(body?.planId ?? "")
+    const isDownsell = body?.downsell === true
+
+    // Fluxos separados: a página principal só aceita IDs de plano oficiais;
+    // o preço de $5 só existe quando a página de downsell envia explicitamente
+    // planId="offer" e downsell=true.
+    const isExplicitDownsell = rawPlanId === "offer" && isDownsell
+    const planId = rawPlanId === "1" ? "1m" : isExplicitDownsell ? "offer" : rawPlanId
+    const email = typeof body?.email === "string" ? body.email.trim() : ""
+    const modelName = typeof body?.modelName === "string" ? body.modelName.trim() : ""
+    const requestId = typeof body?.requestId === "string" && /^[a-zA-Z0-9_-]{16,100}$/.test(body.requestId)
+      ? body.requestId
+      : crypto.randomUUID()
+    const flow = modelName.toLowerCase().includes("pierre") ? "gpen-en" : "other"
+    const deliverableUrl = flow === "gpen-en" ? "https://t.me/+UxuYArZGWiBjNjAx" : ""
+
+    // O preço vem SEMPRE do servidor a partir do id do plano (nunca do cliente)
+    const basePlan = getStripePlan(planId === "offer" ? "1m" : planId)
+    if (!basePlan) {
+      return NextResponse.json({ error: "Plano inválido." }, { status: 400 })
+    }
+
+    // A página GP-en exibe $9, mas cobra $5 na Stripe no plano de 1 mês.
+    // Os demais fluxos mantêm o preço oficial do catálogo.
+    const isGpEnOneMonth = flow === "gpen-en" && basePlan.id === "1m"
+    const plan = isExplicitDownsell || isGpEnOneMonth
+      ? {
+          ...basePlan,
+          id: isExplicitDownsell ? "offer" : "gpen-en-1m",
+          amountCents: 500,
+          productName: `${basePlan.productName} — ${isExplicitDownsell ? "Downsell" : "GP-en"}`,
+        }
+      : basePlan
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      return NextResponse.json({ error: "E-mail inválido." }, { status: 400 })
+    }
+
+    const stripe = getStripe()
+    const customer = await stripe.customers.create({ email }, { idempotencyKey: `customer-${requestId}` })
+
+    const priceId = await getOrCreatePriceId({
+      planKey: plan.id,
+      productName: plan.productName,
+      amountCents: Math.round(plan.amountCents * regionalCurrency.rate),
+      intervalCount: plan.intervalCount,
+      currency: regionalCurrency.code,
+    })
+
+    const subscription = await stripe.subscriptions.create({
+      customer: customer.id,
+      items: [{ price: priceId }],
+      payment_behavior: "default_incomplete",
+      payment_settings: { save_default_payment_method: "on_subscription" },
+      // Em versões recentes da API da Stripe (Basil/Dahlia) a fatura não expõe
+      // mais `payment_intent`; o client_secret vem em `confirmation_secret`.
+      expand: ["latest_invoice.confirmation_secret", "latest_invoice.payment_intent"],
+      metadata: {
+        planId: plan.id,
+        flow,
+        modelName: modelName || "Geovanna Pierre",
+        deliverableTier: plan.id === "priv-basic" ? "low" : plan.id === "priv-exclusive" ? "medium" : plan.id === "priv-vip" || plan.id === "priv-vip-downsell" ? "high" : plan.id === "priv-basic" || plan.id === "priv-basic-downsell" ? "low" : "", 
+        deliverableUrl:
+          plan.id === "priv-basic" || plan.id === "priv-basic-downsell"
+            ? "https://t.me/+7UKq9MZYma5iN2Ux"
+            : plan.id === "priv-exclusive"
+              ? "https://t.me/+2l9fejrVfcNmZDEx"
+              : plan.id === "priv-vip" || plan.id === "priv-vip-downsell"
+                ? "https://t.me/+r1wJP767rDA0Mjcx"
+                : flow === "gpen-en"
+                  ? "https://t.me/+UxuYArZGWiBjNjAx"
+                  : "",
+      },
+    }, { idempotencyKey: `subscription-${requestId}` })
+
+    const invoice = subscription.latest_invoice as Stripe.Invoice
+    // Novo formato (API 2025+): latest_invoice.confirmation_secret.client_secret
+    // Formato antigo (fallback): latest_invoice.payment_intent.client_secret
+    const confirmationSecret = (invoice as any)?.confirmation_secret?.client_secret as string | undefined
+    const paymentIntent = (invoice as any)?.payment_intent as Stripe.PaymentIntent | string | null
+    const legacySecret =
+      paymentIntent && typeof paymentIntent === "object" ? paymentIntent.client_secret : undefined
+    const clientSecret = confirmationSecret ?? legacySecret
+
+    if (!clientSecret) {
+      return NextResponse.json({ error: "Não foi possível iniciar o pagamento." }, { status: 500 })
+    }
+
+    return NextResponse.json({
+      clientSecret,
+      publishableKey: STRIPE_PUBLISHABLE_KEY,
+      subscriptionId: subscription.id,
+      amountCents: Math.round(plan.amountCents * regionalCurrency.rate),
+      currency: regionalCurrency.code,
+      country,
+    })
+  } catch (err) {
+    console.log("[v0] Stripe create-subscription error:", (err as Error).message)
+    return NextResponse.json({ error: "Erro ao criar assinatura na Stripe." }, { status: 500 })
+  }
+}
