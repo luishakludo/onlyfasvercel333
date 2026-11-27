@@ -45,14 +45,18 @@ const translations = {
 type Locale = PrivLocale
 
 const fixedPrices: Record<string, Partial<Record<DisplayCurrency, number>>> = {
-  "priv-vip": { USD: 15, BRL: 20, EUR: 15, GBP: 15 },
+  "priv-vip": { USD: 7.99, EUR: 7.99, GBP: 7.99 },
   "priv-basic": { USD: 9.6, BRL: 9.6, EUR: 9.6, GBP: 9.6 },
   "priv-exclusive": { USD: 13.9, BRL: 18, EUR: 13.9, GBP: 13.9 },
 }
 
-const formatPrice = (usd: string, currency: DisplayCurrency, offerId?: string) => {
+const fixedOldPrices: Record<string, Partial<Record<DisplayCurrency, number>>> = {
+  "priv-vip": { USD: 15, EUR: 15, GBP: 15 },
+}
+
+const formatPrice = (usd: string, currency: DisplayCurrency, fixedAmounts?: Partial<Record<DisplayCurrency, number>>) => {
   const baseAmount = Number.parseFloat(usd.replace(/[^0-9.]/g, ""))
-  const fixedAmount = offerId ? fixedPrices[offerId]?.[currency] : undefined
+  const fixedAmount = fixedAmounts?.[currency]
   const amount = fixedAmount ?? baseAmount * currencyConfig[currency].rate
   return new Intl.NumberFormat(currencyConfig[currency].locale, { style: "currency", currency, maximumFractionDigits: currency === "CLP" ? 0 : 2 }).format(amount)
 }
@@ -62,8 +66,8 @@ const offers = [
     id: "priv-vip",
     title: "🎁 💎 Total VIP Album ⭐ BEST SELLER ⭐",
     description: "All albums included 🔥",
-    price: "$15.00",
-    oldPrice: "$49.99",
+    price: "$7.99",
+    oldPrice: "$15.00",
     accent: "VIP",
     image: "/images/priv-en2-vip.png",
   },
@@ -120,8 +124,8 @@ export default function PrivPage() {
     ...offer,
     title: offer.id === "priv-vip" ? t.vip : offer.id === "priv-basic" ? t.basic : t.exclusive,
     description: offer.id === "priv-vip" ? t.vipDescription : offer.id === "priv-basic" ? t.basicDescription : t.exclusiveDescription,
-    price: formatPrice(offer.price, currency, offer.id),
-    oldPrice: offer.oldPrice ? formatPrice(offer.oldPrice, currency) : undefined,
+    price: formatPrice(offer.price, currency, fixedPrices[offer.id]),
+    oldPrice: offer.oldPrice ? formatPrice(offer.oldPrice, currency, fixedOldPrices[offer.id]) : undefined,
   })), [t, currency])
 
   const handleOfferClick = (offer: (typeof offers)[number]) => {
